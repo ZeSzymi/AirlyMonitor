@@ -4,7 +4,8 @@ CREATE TABLE Installations (
     Elevation float not null,
     SponsorId UNIQUEIDENTIFIER not null,
     Latitude float not null,
-    Longitude float not null
+    Longitude float not null,
+    Deleted BIT not null DEFAULT 0
 );
 
 CREATE TABLE [Addresses] (
@@ -14,7 +15,7 @@ CREATE TABLE [Addresses] (
     Street varchar(MAX) null,
     DisplayAddress1 varchar(MAX) null,
     DisplayAddress2 varchar(MAX) null,
-    [Number] int null,
+    [Number] varchar(MAX) null,
 );
 
 CREATE TABLE Sponsors (
@@ -34,11 +35,35 @@ CREATE TABLE Measurements (
     [Values] VARCHAR(MAX) not null
 )
 
+CREATE TABLE AlertDefinitions (
+    Id uniqueidentifier not null,
+    InstallationId int not null,
+    CheckEvery int not null,
+    Rules VARCHAR(MAX) not null,
+    Deleted BIT not null DEFAULT 0
+)
+
+CREATE Table Alerts (
+    Id uniqueidentifier not null,
+    AlertDefinitionId uniqueidentifier not null,
+    InstallationId int not null,
+    [DateTime] DATETIME2 not null,
+    Details VARCHAR(MAX) not null
+)
 
 ALTER TABLE Installations ADD CONSTRAINT PK_Installations PRIMARY KEY (Id);
 ALTER TABLE Addresses ADD CONSTRAINT PK_Addresses PRIMARY KEY (AddressId);
 ALTER TABLE Sponsors ADD CONSTRAINT PK_Sponsors PRIMARY KEY (SponsorId);
 ALTER TABLE Measurements ADD CONSTRAINT PK_Measurements PRIMARY KEY (InstallationId);
+ALTER TABLE AlertDefinitions ADD CONSTRAINT PK_AlertDefinitions PRIMARY KEY (Id);
+ALTER TABLE Alerts ADD CONSTRAINT PK_Alerts PRIMARY KEY (Id);
+
 ALTER TABLE Installations ADD CONSTRAINT FK_Installations_Addresses FOREIGN KEY (AddressId) REFERENCES [Addresses](AddressId);
 ALTER TABLE Installations ADD CONSTRAINT FK_Installations_Sponsors FOREIGN KEY (SponsorId) REFERENCES [Sponsors](SponsorId);
+
+ALTER TABLE AlertDefinitions ADD CONSTRAINT FK_AlertDefinitions_Installations FOREIGN KEY (InstallationId) REFERENCES [Installations](Id);
+
+ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_Installations FOREIGN KEY (InstallationId) REFERENCES [Installations](Id);
+ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_AlertDefinitions FOREIGN KEY (AlertDefinitionId) REFERENCES [AlertDefinitions](Id);
+
 ALTER TABLE Measurements ADD CONSTRAINT FK_Measurements_Installations FOREIGN KEY (InstallationId) REFERENCES Installations(Id);

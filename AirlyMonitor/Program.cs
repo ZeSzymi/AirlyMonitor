@@ -4,6 +4,7 @@ using AirlyInfrastructure.Repositories.Interfaces;
 using AirlyMonitor.Models.Configuration;
 using AirlyMonitor.Services;
 using AirlyMonitor.Services.Interface;
+using AirlyMonitor.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IMeasurementRepository, MeasurementRepository>();
+builder.Services.AddScoped<IInstallationRepository, InstallationsRepository>();
+builder.Services.AddScoped<IAlertDefinitionsRepository, AlertDefinitionsRepository>();
+
+builder.Services.AddScoped<IAlertDefinitionsService, AlertDefinitionsService>();
+builder.Services.AddScoped<IAirlyApiService, AirlyApiService>();
 builder.Services.AddScoped<IHttpService, HttpService>();
 
 builder.Services.Configure<AirlyApiOptions>(builder.Configuration.GetSection("AirlyApi"));

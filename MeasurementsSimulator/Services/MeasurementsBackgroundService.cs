@@ -11,7 +11,7 @@ namespace MeasurementsSimulator.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var timer = new PeriodicTimer(TimeSpan.FromMinutes(10));
+            var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
             while (await timer.WaitForNextTickAsync(stoppingToken))
             {
                 var utcNow = DateTime.UtcNow;
@@ -22,7 +22,7 @@ namespace MeasurementsSimulator.Services
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var measurementService = scope.ServiceProvider.GetRequiredService<IMeasurementService>();
-                        await measurementService.AddMeasurements(_lastRun);
+                        await measurementService.AddMeasurementsAsync(_lastRun);
                     }
                 }
             }

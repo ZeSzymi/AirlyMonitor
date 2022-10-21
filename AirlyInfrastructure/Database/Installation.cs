@@ -6,12 +6,12 @@
         public Guid AddressId { get; set; }
         public Address Address { get; set; }
         public double Elevation { get; set; }
-        public bool Airly { get; set; }
         public Guid SponsorId { get; set; }
         public Sponsor Sponsor { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Location Location { get; set; }
+        public bool Deleted { get; set; }
 
     }
 

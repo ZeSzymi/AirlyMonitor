@@ -1,4 +1,6 @@
-﻿using AirlyMonitor.Services.Interface;
+﻿using AirlyMonitor.Models.Configuration;
+using AirlyMonitor.Services.Interface;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -9,10 +11,12 @@ namespace AirlyMonitor.Services
     public class HttpService : IHttpService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly AirlyApiOptions _options;
 
-        public HttpService(IHttpClientFactory httpClientFactory)
+        public HttpService(IHttpClientFactory httpClientFactory, IOptions<AirlyApiOptions> options)
         {
             _httpClientFactory = httpClientFactory;
+            _options = options.Value;
         }
 
         public async Task<T> Get<T>(string url) where T : class
@@ -21,7 +25,7 @@ namespace AirlyMonitor.Services
             {
                 Headers =
                 {
-                    { "apikey", "Hg6TGZFyU1E1b8BW269SPwZHGfPIGuME" },
+                    { "apikey", _options.ApiKey },
                 }
             };
 
@@ -50,7 +54,7 @@ namespace AirlyMonitor.Services
             {
                 Headers =
                 {
-                    { "apikey", "Hg6TGZFyU1E1b8BW269SPwZHGfPIGuME" },
+                    { "apikey", _options.ApiKey },
                 },
                 Content = content
             };
