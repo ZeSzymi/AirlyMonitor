@@ -29,6 +29,7 @@ CREATE TABLE Sponsors (
 );
 
 CREATE TABLE Measurements (
+    Id uniqueidentifier not null,
     InstallationId int not null,
     FromDateTime DATETIME2 not null,
     TillDateTime DATETIME2 not null,
@@ -38,9 +39,12 @@ CREATE TABLE Measurements (
 CREATE TABLE AlertDefinitions (
     Id uniqueidentifier not null,
     InstallationId int not null,
-    CheckEvery int not null,
+    CheckEvery int not null, 
     Rules VARCHAR(MAX) not null,
-    Deleted BIT not null DEFAULT 0
+    Deleted BIT not null DEFAULT 0,
+    Active BIT not null DEFAULT 1,
+    [From] DATETIME2 null,
+    [To] DATETIME2 null
 )
 
 CREATE Table Alerts (
@@ -48,13 +52,14 @@ CREATE Table Alerts (
     AlertDefinitionId uniqueidentifier not null,
     InstallationId int not null,
     [DateTime] DATETIME2 not null,
-    Details VARCHAR(MAX) not null
+    Reports VARCHAR(MAX) not null,
+    RaiseAlert BIT not null DEFAULT 0
 )
 
 ALTER TABLE Installations ADD CONSTRAINT PK_Installations PRIMARY KEY (Id);
 ALTER TABLE Addresses ADD CONSTRAINT PK_Addresses PRIMARY KEY (AddressId);
 ALTER TABLE Sponsors ADD CONSTRAINT PK_Sponsors PRIMARY KEY (SponsorId);
-ALTER TABLE Measurements ADD CONSTRAINT PK_Measurements PRIMARY KEY (InstallationId);
+ALTER TABLE Measurements ADD CONSTRAINT PK_Measurements PRIMARY KEY (Id);
 ALTER TABLE AlertDefinitions ADD CONSTRAINT PK_AlertDefinitions PRIMARY KEY (Id);
 ALTER TABLE Alerts ADD CONSTRAINT PK_Alerts PRIMARY KEY (Id);
 

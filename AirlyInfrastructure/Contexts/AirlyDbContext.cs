@@ -11,6 +11,7 @@ namespace AirlyInfrastructure.Contexts
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<AlertDefinition> AlertDefinitions { get; set; }
+        public DbSet<Alert> Alerts { get; set; }
         public AirlyDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,7 +27,7 @@ namespace AirlyInfrastructure.Contexts
             modelBuilder.Entity<Measurement>(measurement =>
             {
                 measurement.ToTable("Measurements");
-                measurement.HasKey(m => m.InstallationId);
+                measurement.HasKey(m => m.Id);
                 measurement.Ignore(m => m.MeasurementValues);
             });
 
@@ -46,6 +47,14 @@ namespace AirlyInfrastructure.Contexts
             {
                 alertDefinition.ToTable("AlertDefinitions");
                 alertDefinition.HasKey(i => i.Id);
+                alertDefinition.Ignore(a => a.AlertRules);
+            });
+
+            modelBuilder.Entity<Alert>(alert =>
+            {
+                alert.ToTable("Alerts");
+                alert.HasKey(i => i.Id);
+                alert.Ignore(a => a.AlertReports);
             });
         }
     }

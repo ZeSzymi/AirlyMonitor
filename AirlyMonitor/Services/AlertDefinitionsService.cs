@@ -1,5 +1,6 @@
 ﻿using AirlyInfrastructure.Database;
 using AirlyInfrastructure.Repositories.Interfaces;
+using AirlyMonitor.Models.Database;
 using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
 
@@ -30,5 +31,11 @@ namespace AirlyMonitor.Services
             alertDefinition.Deleted = false;
             return await _alertDefinitionsRepository.AddAlertDefinitionAsync(alertDefinition);
         }
+
+        public Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId)
+            => _alertDefinitionsRepository.GetAlertDefinitionsAsync(installationId);
+
+        public Task<List<AlertDefinition>> GetAlertDefinitionsAsync()
+            => _alertDefinitionsRepository.GetAlertDefinitionsAsync();
     }
 }

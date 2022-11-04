@@ -5,6 +5,7 @@ namespace AirlyInfrastructure.Repositories.Interfaces
     public interface IAlertDefinitionsRepository
     {
         Task<AlertDefinition> AddAlertDefinitionAsync(AlertDefinition alertDefinition);
-        Task<List<AlertDefinition>> GetAlertDefinitions();
+        Task<List<AlertDefinition>> GetAlertDefinitionsAsync();
+        Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId);
     }
 }

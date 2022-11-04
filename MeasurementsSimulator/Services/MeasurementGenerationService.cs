@@ -1,4 +1,5 @@
 ﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Models.Constants;
 using MeasurementsSimulator.Services.Interfaces;
 
 namespace MeasurementsSimulator.Services
@@ -34,7 +35,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "PM1",
+                Name = MeasurementValueNames.PM1,
                 Value = random.NextDouble() * (55.55 - 1.8) + 1.8
 
             };
@@ -45,7 +46,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "PM25",
+                Name = MeasurementValueNames.PM25,
                 Value = random.NextDouble() * (90.33 - 15.05) + 15.05
 
             };
@@ -56,7 +57,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "PM25",
+                Name = MeasurementValueNames.PM10,
                 Value = random.NextDouble() * (120.10 - 20.01) + 20.01
 
             };
@@ -67,7 +68,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "PRESSURE",
+                Name = MeasurementValueNames.PRESSURE,
                 Value = random.NextDouble() * (1300.63 - 850.40) + 850.40
 
             };
@@ -78,7 +79,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "HUMIDITY",
+                Name = MeasurementValueNames.HUMIDITY,
                 Value = random.NextDouble() * (110.63 - 60.28) + 60.28
 
             };
@@ -89,7 +90,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "TEMPERATURE",
+                Name = MeasurementValueNames.TEMPERATURE,
                 Value = random.NextDouble() * (36.60 - 0.05) + 0.05
 
             };
@@ -100,7 +101,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "NO2",
+                Name = MeasurementValueNames.NO2,
                 Value = random.NextDouble() * (60.06 - 10.05) + 10.05
 
             };
@@ -111,7 +112,7 @@ namespace MeasurementsSimulator.Services
             Random random = new Random();
             return new MeasurementValue
             {
-                Name = "O3",
+                Name = MeasurementValueNames.O3,
                 Value = random.NextDouble() * (35.50 - 00.00) + 00.00
 
             };

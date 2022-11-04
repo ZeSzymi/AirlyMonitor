@@ -21,7 +21,10 @@ namespace AirlyInfrastructure.Repositories
             return alertDefinition;
         }
 
-        public Task<List<AlertDefinition>> GetAlertDefinitions()
+        public Task<List<AlertDefinition>> GetAlertDefinitionsAsync()
             => _context.AlertDefinitions.ToListAsync();
+
+        public Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId)
+            => _context.AlertDefinitions.Where(a => a.InstallationId == installationId).ToListAsync();
     }
 }

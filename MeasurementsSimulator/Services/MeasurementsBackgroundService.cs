@@ -1,4 +1,6 @@
-﻿using MeasurementsSimulator.Services.Interfaces;
+﻿using AirlyInfrastructure.Repositories.Interfaces;
+using AirlyInfrastructure.Repositories;
+using MeasurementsSimulator.Services.Interfaces;
 
 namespace MeasurementsSimulator.Services
 {
@@ -16,15 +18,29 @@ namespace MeasurementsSimulator.Services
             {
                 var utcNow = DateTime.UtcNow;
 
-                if (_lastRun.AddHours(1) < DateTime.UtcNow)
-                {
+                //if (_lastRun.AddMinutes(1) < DateTime.UtcNow)
+                //{
                     _lastRun = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, 0, 0);
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
-                        var measurementService = scope.ServiceProvider.GetRequiredService<IMeasurementService>();
-                        await measurementService.AddMeasurementsAsync(_lastRun);
+                        var measurementGenerationService = scope.ServiceProvider.GetRequiredService<IMeasurementGenerationService>();
+                        var alertDefinitionsRepository = scope.ServiceProvider.GetRequiredService<IAlertDefinitionsRepository>();
+                        var measurementRepository = scope.ServiceProvider.GetRequiredService<IMeasurementRepository>();
+                        var logger = scope.ServiceProvider.GetRequiredService<ILogger<MeasurementsBackgroundService>>();
+
+                        try
+                        {
+                            var installationIds = (await alertDefinitionsRepository.GetAlertDefinitionsAsync()).Select(a => a.InstallationId).ToList();
+                            var measurements = measurementGenerationService.GenerateMeasurements(installationIds, utcNow);
+                            await measurementRepository.AddMeasurementsAsync(measurements);
+                    } catch (Exception e)
+                        {
+                            logger.LogError(e, e.Message);
+                            Console.WriteLine(e.Message);
+                        }
+
                     }
-                }
+               // }
             }
         }
     }

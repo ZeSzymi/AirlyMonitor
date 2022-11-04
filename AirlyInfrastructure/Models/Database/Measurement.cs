@@ -4,6 +4,7 @@ namespace AirlyInfrastructure.Database
 {
     public class Measurement
     {
+        public Guid Id { get; set; }
         public int InstallationId { get; set; }
         public DateTime FromDateTime { get; set; }
         public DateTime TillDateTime { get; set; }
