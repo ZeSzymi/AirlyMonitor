@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirlyInfrastructure", "Airl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeasurementsSimulator", "MeasurementsSimulator\MeasurementsSimulator.csproj", "{BB991AE5-4121-47D9-8846-70B1AFB4739D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlertsMonitor", "AlertsMonitor\AlertsMonitor.csproj", "{DBA23814-120C-4D5F-954E-DAEA162245C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlertsMonitor", "AlertsMonitor\AlertsMonitor.csproj", "{DBA23814-120C-4D5F-954E-DAEA162245C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{13446252-D274-47F4-9EB0-010BD60C5EA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DBA23814-120C-4D5F-954E-DAEA162245C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBA23814-120C-4D5F-954E-DAEA162245C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBA23814-120C-4D5F-954E-DAEA162245C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13446252-D274-47F4-9EB0-010BD60C5EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13446252-D274-47F4-9EB0-010BD60C5EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13446252-D274-47F4-9EB0-010BD60C5EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13446252-D274-47F4-9EB0-010BD60C5EA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
