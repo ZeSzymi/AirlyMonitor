@@ -1,0 +1,13 @@
+<div class="d-flex justify-content-center mt-5">
+  <div [formGroup]="form" class="d-flex flex-column group">
+    <h1>Register</h1>
+    <h6 class="mt-5">Username</h6>
+    <input class="form-control" formControlName="username" />
+    <h6>Password</h6>
+    <input type="password" class="form-control" formControlName="password" />
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary mt-2" (click)="goToLogin()">Login</button>
+      <button type="button" class="btn btn-outline-primary mt-2" (click)="save()">Save</button>
+    </div>
+  </div>
+</div>

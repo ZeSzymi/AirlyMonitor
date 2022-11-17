@@ -1,5 +1,6 @@
 ﻿using AirlyMonitor.Models.QueryParams;
 using AirlyMonitor.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlyMonitor.Controllers
@@ -15,6 +16,7 @@ namespace AirlyMonitor.Controllers
         }
 
         [HttpGet()]
+        [Authorize]
         public async Task<IActionResult> GetInstallationsAsync([FromQuery] GetInstallationsQueryParams queryParams)
         {
             var installations = await _airlyApiService.GetNearestInstallationsAsync(queryParams);

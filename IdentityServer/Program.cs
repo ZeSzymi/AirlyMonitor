@@ -6,21 +6,25 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
-builder.Services.AddDbContext<IdentityDbContext>(options => {
+builder.Services.AddDbContext<IdentityDbContext>(options =>
+{
     options.UseSqlServer(connectionString);
     options.UseOpenIddict();
 });
 builder.Services.AddControllers();
 
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<IdentityDbContext>();
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
-    options.Password.RequiredUniqueChars = 1;
+    options.Password.RequiredUniqueChars = 0;
 
     // Lockout settings.
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
@@ -30,19 +34,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     // User settings.
     options.User.AllowedUserNameCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = false;
+    options.User.RequireUniqueEmail = true;
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    // Cookie settings
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-    options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.SlidingExpiration = true;
-});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/account/login";
+                });
 
 builder.Services.AddOpenIddict()
 
@@ -58,37 +57,32 @@ builder.Services.AddOpenIddict()
        .AddServer(options =>
        {
            options
-               .AllowClientCredentialsFlow();
-
-           options
                 .SetAuthorizationEndpointUris("/connect/authorize")
-                .SetTokenEndpointUris("/connect/token");
+                .SetTokenEndpointUris("/connect/token")
+                .SetUserinfoEndpointUris("/connect/userinfo")
+                .SetIntrospectionEndpointUris("/connect/introspect"); 
 
            options
+                .AllowClientCredentialsFlow()
                 .AllowAuthorizationCodeFlow()
                 .RequireProofKeyForCodeExchange();
 
            // Encryption and signing of tokens
            options
-               .AddEphemeralEncryptionKey()
-               .AddEphemeralSigningKey()
+               .AddDevelopmentEncryptionCertificate()
+               .AddDevelopmentSigningCertificate()
                .DisableAccessTokenEncryption();
 
-           // Register scopes (permissions)
-           options.RegisterScopes("api");
+       // Register scopes (permissions)
+       options.RegisterScopes(new string[] { "api", "simulator" });
 
            // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
            options
-                .UseAspNetCore()
-                .EnableTokenEndpointPassthrough()
-                .EnableAuthorizationEndpointPassthrough();
+            .UseAspNetCore()
+            .EnableTokenEndpointPassthrough()
+            .EnableAuthorizationEndpointPassthrough()
+            .EnableUserinfoEndpointPassthrough();
        });
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-        {
-            options.LoginPath = "/Account/login";
-        });
 
 var app = builder.Build();
 
@@ -102,10 +96,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
 
 app.UseRouting();
 
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {

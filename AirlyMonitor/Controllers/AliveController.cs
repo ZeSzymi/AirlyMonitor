@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AirlyMonitor.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize]
     public class AliveController : Controller
     {
         private readonly ILogger<AliveController> _logger;

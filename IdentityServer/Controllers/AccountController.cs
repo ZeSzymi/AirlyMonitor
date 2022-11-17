@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Threading;
+using CryptoHelper;
 using IdentityServer.Models.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 
@@ -12,18 +14,30 @@ namespace IdentityServer.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IOpenIddictApplicationManager _manager;
 
-        public AccountController(IOpenIddictApplicationManager manager)
+        public AccountController(UserManager<IdentityUser> userManager, IOpenIddictApplicationManager manager)
         {
+            _userManager = userManager;
             _manager = manager;
         }
 
         [HttpPost("Login")]
         [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
+            var user = await _userManager.FindByEmailAsync(model.Username);
+
+            if (user == null)
+            {
+                return BadRequest("User does not exist");
+            }
+
+            var result = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if (result)
+            {
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, model.Username)
@@ -31,18 +45,37 @@ namespace IdentityServer.Controllers
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                if (Url.IsLocalUrl(model.ReturnUrl))
-                {
-                    return Ok(model.ReturnUrl);
-                }
-
-            return Ok();
+                return Ok(new { ReturnUrl = $"{HttpContext.Request.Host}{model.ReturnUrl}" } );
+            }
+           
+            return BadRequest("Wrong password");
         }
 
-        [HttpGet("Add")]
-        public async Task<IActionResult> CreateAccount()
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        {
+            var result = await _userManager.FindByEmailAsync(model.Username);
+            if (result == null)
+            {
+                var registrationResult = await _userManager.CreateAsync(new IdentityUser
+                {
+                    UserName = model.Username,
+                    Email = model.Username,
+                }, model.Password);
+
+                if (registrationResult.Succeeded)
+                { 
+                    return Ok();
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet("add/client")]
+        public async Task<IActionResult> client()
         {
             if (await _manager.FindByClientIdAsync("postman") is null)
             {
@@ -60,7 +93,14 @@ namespace IdentityServer.Controllers
                     }
                 });
             }
-            return Ok();
+
+            return BadRequest();
+        }
+
+        [HttpGet("~/pass/{pass}")]
+        public async Task<IActionResult> client(string pass)
+        {
+            return Ok(Crypto.HashPassword(pass));
         }
 
         public async Task<IActionResult> Logout()

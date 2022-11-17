@@ -1,0 +1,9 @@
+.group {
+    width: 360px;
+}
+
+@media (max-width: 768px) {
+    .group {
+        width: 100%;
+    }
+}
