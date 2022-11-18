@@ -37,6 +37,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7214").AllowAnyMethod().AllowAnyHeader();
+        });
+});
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -74,7 +83,7 @@ builder.Services.AddOpenIddict()
                .DisableAccessTokenEncryption();
 
        // Register scopes (permissions)
-       options.RegisterScopes(new string[] { "api", "simulator" });
+       options.RegisterScopes("api");
 
            // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
            options
@@ -99,6 +108,8 @@ app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthentication();
 

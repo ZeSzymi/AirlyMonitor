@@ -7,13 +7,10 @@ using AirlyMonitor.Models.Configuration;
 using AirlyMonitor.Services;
 using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using OpenIddict.Validation.AspNetCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,19 +18,50 @@ builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVaria
 
 builder.Host.UseSerilog((context, lc) => lc.ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext());
 
-
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
 
 builder.Services.AddDbContext<AirlyDbContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    var scheme = new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Flows = new OpenApiOAuthFlows
+        {
+            AuthorizationCode = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri(builder.Configuration.GetSection("Auth:Swagger:AuthorizationUrl").Get<string>()),
+                TokenUrl = new Uri(builder.Configuration.GetSection("Auth:Swagger:TokenUrl").Get<string>())
+            }
+        },
+        Type = SecuritySchemeType.OAuth2
+    };
+
+    options.AddSecurityDefinition("OAuth", scheme);
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Id = "OAuth", Type = ReferenceType.SecurityScheme }
+            },
+            new List<string> { }
+        }
+    });
+});
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IMeasurementRepository, MeasurementRepository>();
 builder.Services.AddScoped<IInstallationRepository, InstallationsRepository>();
 builder.Services.AddScoped<IAlertDefinitionsRepository, AlertDefinitionsRepository>();
 builder.Services.AddScoped<IAlertsRepository, AlertsRepository>();
+builder.Services.AddScoped<IMeasurementsService, MeasurementsService>();
 
 builder.Services.AddScoped<IAlertsService, AlertsService>();
 builder.Services.AddScoped<IAlertDefinitionsService, AirlyMonitor.Services.AlertDefinitionsService>();
@@ -45,7 +73,7 @@ builder.Services.Configure<AirlyApiOptions>(builder.Configuration.GetSection("Ai
 builder.Services.AddAuthentication("Bearer")
            .AddJwtBearer("Bearer", options =>
            {
-               options.Authority = "https://localhost:7078";
+               options.Authority = builder.Configuration.GetSection("Auth:Authority").Get<string>();
 
                options.TokenValidationParameters = new TokenValidationParameters
                {
@@ -76,6 +104,11 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
+    options.OAuthClientId("swagger");
+    options.OAuthClientSecret("swagger-secret-4");
+    options.OAuthScopes("api");
+    options.OAuthUsePkce();
+    options.EnablePersistAuthorization();
 });
 
 app.UseHttpsRedirection();

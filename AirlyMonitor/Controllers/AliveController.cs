@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AirlyMonitor.Controllers
 {
     [Route("/api/[controller]")]
-    [Authorize]
+    [AllowAnonymous]
     public class AliveController : Controller
     {
         private readonly ILogger<AliveController> _logger;

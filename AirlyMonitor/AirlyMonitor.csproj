@@ -31,4 +31,8 @@
     <ProjectReference Include="..\AirlyInfrastructure\AirlyInfrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Content\" />
+  </ItemGroup>
+
 </Project>
