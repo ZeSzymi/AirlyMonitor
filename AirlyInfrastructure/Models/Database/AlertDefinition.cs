@@ -4,6 +4,7 @@ namespace AirlyInfrastructure.Database
 {
     public class AlertDefinition
     {
+        public string UserId { get; set; }
         public Guid Id { get; set; }
         public int InstallationId { get; set; }
         public int CheckEvery { get; set; }

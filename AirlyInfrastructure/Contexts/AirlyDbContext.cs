@@ -1,4 +1,5 @@
 ﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Models.Database;
 using AirlyMonitor.Models.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace AirlyInfrastructure.Contexts
         public DbSet<Sponsor> Sponsors { get; set; }
         public DbSet<AlertDefinition> AlertDefinitions { get; set; }
         public DbSet<Alert> Alerts { get; set; }
+        public DbSet<UserInstallation> UserInstallations { get; set; }
         public AirlyDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,6 +57,14 @@ namespace AirlyInfrastructure.Contexts
                 alert.ToTable("Alerts");
                 alert.HasKey(i => i.Id);
                 alert.Ignore(a => a.AlertReports);
+            });
+
+            modelBuilder.Entity<UserInstallation>(userInstallation =>
+            {
+                userInstallation.ToTable("AspNetUsersInstallations");
+                userInstallation.HasKey(u => new { u.UserId, u.InstallationId });
+
+                userInstallation.HasOne(u => u.Installation).WithMany();
             });
         }
     }

@@ -7,10 +7,12 @@ namespace AlertsMonitor.Services
     public class AlertsGeneratorService : IAlertsGeneratorService
     {
         private readonly IAlertsRepository _alertsRepository;
+        private readonly ILogger<AlertsGeneratorService> _logger;
 
-        public AlertsGeneratorService(IAlertsRepository alertsRepository)
+        public AlertsGeneratorService(IAlertsRepository alertsRepository, ILogger<AlertsGeneratorService> logger)
         {
             _alertsRepository = alertsRepository;
+            _logger = logger;
         }
 
         public async Task<List<Alert>> AddAlertsAsync(List<AlertDefinition> alertDefinitions, List<Measurement> measurements, DateTime utcNow)
@@ -19,6 +21,8 @@ namespace AlertsMonitor.Services
 
             foreach (var alertDefinition in alertDefinitions)
             {
+                _logger.LogInformation($"Evaluating alertDefinition: {alertDefinition.Id} for installationId: {alertDefinition.InstallationId}");
+
                 var measurement = measurements.FirstOrDefault(m => m.InstallationId == alertDefinition.InstallationId);
                 if (measurement == null)
                 {
@@ -30,14 +34,18 @@ namespace AlertsMonitor.Services
                     .Where(a => a != null)
                     .ToList();
 
-                alerts.Add(new Alert
+                var alert = new Alert
                 {
                     DateTime = utcNow,
                     AlertDefinitionId = alertDefinition.Id,
                     InstallationId = alertDefinition.InstallationId,
                     AlertReports = alertReports,
                     RaiseAlert = alertReports.Any(r => r.RaiseAlert)
-                });
+                };
+
+                _logger.LogInformation($"Alert report: {alert.Reports}");
+
+                alerts.Add(alert);
             }
 
             return await _alertsRepository.AddAlertsAsync(alerts);

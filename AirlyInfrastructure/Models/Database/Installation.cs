@@ -1,4 +1,6 @@
-﻿namespace AirlyMonitor.Models.Database
+﻿using AirlyInfrastructure.Models.Database;
+
+namespace AirlyMonitor.Models.Database
 {
     public class Installation
     {
@@ -12,7 +14,6 @@
         public double Longitude { get; set; }
         public Location Location { get; set; }
         public bool Deleted { get; set; }
-
     }
 
     public class Location

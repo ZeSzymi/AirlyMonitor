@@ -51,7 +51,6 @@ namespace IdentityServer.Controllers
 
         [HttpGet("~/connect/authorize")]
         [HttpPost("~/connect/authorize")]
-       // [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Authorize()
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
@@ -77,7 +76,8 @@ namespace IdentityServer.Controllers
             {
                 // 'subject' claim which is required
                 new Claim(OpenIddictConstants.Claims.Subject, result.Principal.Identity.Name),
-                new Claim("some claim", "some value").SetDestinations(OpenIddictConstants.Destinations.AccessToken)
+                new Claim(ClaimTypes.NameIdentifier, result.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+                new Claim(ClaimTypes.Name, result.Principal.Identity.Name).SetDestinations(OpenIddictConstants.Destinations.AccessToken)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

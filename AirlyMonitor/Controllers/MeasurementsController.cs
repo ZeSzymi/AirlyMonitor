@@ -1,10 +1,13 @@
-﻿using AirlyInfrastructure.Models.Constants;
+﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Models.Constants;
 using AirlyInfrastructure.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlyMonitor.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize]
     public class MeasurementsController : Controller
     {
         private readonly IMeasurementsService _measurementsService;
@@ -30,10 +33,10 @@ namespace AirlyMonitor.Controllers
             });
         }
 
-        [HttpGet("{instrumentId}")]
-        public async Task<IActionResult> GetMeasurements(int installationId)
+        [HttpGet("{installationId}")]
+        public async Task<ActionResult<List<Measurement>>> GetMeasurements(int installationId)
         {
-            var measurements = _measurementsService.GetMeasurementsAsync(installationId);
+            var measurements = await _measurementsService.GetMeasurementsAsync(installationId);
             return Ok(measurements);
         }
     }

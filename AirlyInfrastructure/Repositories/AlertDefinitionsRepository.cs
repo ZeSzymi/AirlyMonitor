@@ -26,5 +26,8 @@ namespace AirlyInfrastructure.Repositories
 
         public Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId)
             => _context.AlertDefinitions.Where(a => a.InstallationId == installationId).ToListAsync();
+
+        public Task<List<AlertDefinition>> GetAlertDefinitionsForUserAsync(string userId)
+            => _context.AlertDefinitions.Where(a => a.UserId == userId).ToListAsync();
     }
 }

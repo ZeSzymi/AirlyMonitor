@@ -1,10 +1,12 @@
 ﻿using AirlyMonitor.Models.Dtos;
 using AirlyMonitor.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlyMonitor.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize]
     public class AlertDefinitionsController : Controller
     {
         private readonly IAlertDefinitionsService _alertDefinitionsService;
@@ -17,7 +19,7 @@ namespace AirlyMonitor.Controllers
         [HttpPost()]
         public async Task<IActionResult> AddAlertDefinition([FromBody] AlertDefinitionDto alertDefinition)
         {
-            var addedAlertDefinition = await _alertDefinitionsService.AddAlertDefinitionAsync(alertDefinition.ToAlertDefinition());
+            var addedAlertDefinition = await _alertDefinitionsService.AddAlertDefinitionAsync(alertDefinition.ToAlertDefinition(User.Identity.Name));
             return Ok(addedAlertDefinition);
         }
 
@@ -25,6 +27,13 @@ namespace AirlyMonitor.Controllers
         public async Task<IActionResult> GetAlertDefinitions(int installationId)
         {
             var alertDefinitions = await _alertDefinitionsService.GetAlertDefinitionsAsync(installationId);
+            return Ok(alertDefinitions);
+        }
+
+        [HttpGet("user")]
+        public async Task<IActionResult> GetAlertDefinitions()
+        {
+            var alertDefinitions = await _alertDefinitionsService.GetAlertDefinitionsForUserAsync(User.Identity.Name);
             return Ok(alertDefinitions);
         }
 

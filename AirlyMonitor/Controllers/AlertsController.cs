@@ -1,9 +1,11 @@
 ﻿using AirlyInfrastructure.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlyMonitor.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize]
     public class AlertsController : Controller
     {
         private readonly IAlertsService _alertsService;

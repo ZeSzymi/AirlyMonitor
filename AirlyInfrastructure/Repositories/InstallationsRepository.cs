@@ -1,11 +1,12 @@
 ﻿using AirlyInfrastructure.Contexts;
+using AirlyInfrastructure.Models.Database;
 using AirlyInfrastructure.Repositories.Interfaces;
 using AirlyMonitor.Models.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirlyInfrastructure.Repositories
 {
-    public class InstallationsRepository : IInstallationRepository
+    public class InstallationsRepository : IInstallationsRepository
     {
         private readonly AirlyDbContext _context;
 
@@ -34,6 +35,19 @@ namespace AirlyInfrastructure.Repositories
             await _context.SaveChangesAsync();
             return installation;
         }
+
+        public async Task<UserInstallation> AddUserInstallationAsync(UserInstallation userInstallation)
+        {
+            await _context.UserInstallations.AddAsync(userInstallation);
+            await _context.SaveChangesAsync();
+            return userInstallation;
+        }
+
+        public Task<UserInstallation?> GetUserInstallationAsync(string userId, int installationId)
+            => _context.UserInstallations.FirstOrDefaultAsync(u => u.UserId == userId && u.InstallationId == installationId);
+
+        public Task<List<Installation>> GetInstallationsForUserAsync(string userId)
+            => _context.UserInstallations.Include(u => u.Installation).Where(u => u.UserId == userId).Select(u => u.Installation).ToListAsync();
 
         public Task<Installation?> GetInstallationAsync(int installationId) => _context
             .Installations

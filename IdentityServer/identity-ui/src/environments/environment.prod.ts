@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://localhost:7078'
+  baseUrl: 'https://airly-identity-server.azurewebsites.net'
 };

@@ -1,33 +1,24 @@
 ﻿using AirlyInfrastructure.Database;
 using AirlyInfrastructure.Repositories.Interfaces;
-using AirlyMonitor.Models.Database;
-using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
 
 namespace AirlyMonitor.Services
 {
     public class AlertDefinitionsService : IAlertDefinitionsService
     {
-        private readonly IInstallationRepository _installationRepository;
         private readonly IAlertDefinitionsRepository _alertDefinitionsRepository;
-        private readonly IAirlyApiService _airlyApiService;
+        private readonly IInstallationsService _installationsService;
 
-        public AlertDefinitionsService(IInstallationRepository installationRepository, IAlertDefinitionsRepository alertDefinitionsRepository, IAirlyApiService airlyApiService)
+        public AlertDefinitionsService(IAlertDefinitionsRepository alertDefinitionsRepository, IInstallationsService installationsService)
         {
-            _installationRepository = installationRepository;
             _alertDefinitionsRepository = alertDefinitionsRepository;
-            _airlyApiService = airlyApiService;
+            _installationsService = installationsService;
         }
 
         public async Task<AlertDefinition> AddAlertDefinitionAsync(AlertDefinition alertDefinition)
         {
-            var installation = await _installationRepository.GetInstallationAsync(alertDefinition.InstallationId);
-            if (installation == null)
-            {
-                var installationFromAirly = await _airlyApiService.GetInstallationByIdAsync(alertDefinition.InstallationId);
-                 await _installationRepository.AddInstallationAsync(installationFromAirly);
-            }
-
+            await _installationsService.AddInstallationIfDoesNotExistAsync(alertDefinition.InstallationId);
+            await _installationsService.AddUserInstallationIfDoesNotExistAsync(alertDefinition.UserId, alertDefinition.InstallationId);
             alertDefinition.Deleted = false;
             return await _alertDefinitionsRepository.AddAlertDefinitionAsync(alertDefinition);
         }
@@ -37,5 +28,9 @@ namespace AirlyMonitor.Services
 
         public Task<List<AlertDefinition>> GetAlertDefinitionsAsync()
             => _alertDefinitionsRepository.GetAlertDefinitionsAsync();
+
+        public Task<List<AlertDefinition>> GetAlertDefinitionsForUserAsync(string userId)
+            => _alertDefinitionsRepository.GetAlertDefinitionsForUserAsync(userId);
+        
     }
 }

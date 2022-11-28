@@ -7,5 +7,7 @@ namespace AirlyInfrastructure.Repositories.Interfaces
         Task<AlertDefinition> AddAlertDefinitionAsync(AlertDefinition alertDefinition);
         Task<List<AlertDefinition>> GetAlertDefinitionsAsync();
         Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId);
+        Task<List<AlertDefinition>> GetAlertDefinitionsForUserAsync(string userId);
+        
     }
 }

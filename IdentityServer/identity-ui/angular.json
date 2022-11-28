@@ -33,7 +33,7 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "local": {
               "budgets": [
                 {
                   "type": "initial",
@@ -54,6 +54,28 @@
               ],
               "outputHashing": "all",
               "outputPath": "../wwwroot"
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "outputPath": "../bin/Debug/net6.0/publish/wwwroot"
             },
             "development": {
               "buildOptimizer": false,

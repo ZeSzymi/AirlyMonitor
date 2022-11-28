@@ -11,8 +11,9 @@ namespace AirlyMonitor.Models.Dtos
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
 
-        public AlertDefinition ToAlertDefinition() => new()
+        public AlertDefinition ToAlertDefinition(string userId) => new()
         {
+            UserId = userId,
             Id = Id ?? Guid.Empty,
             InstallationId = InstallationId,
             CheckEvery = CheckEvery,

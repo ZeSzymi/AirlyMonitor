@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Threading;
 using CryptoHelper;
 using IdentityServer.Models.Dtos;
 using Microsoft.AspNetCore.Authentication;
@@ -40,7 +39,8 @@ namespace IdentityServer.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, model.Username)
+                    new Claim(ClaimTypes.Name, user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, model.Username)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

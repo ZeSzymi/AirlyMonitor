@@ -37,6 +37,7 @@ CREATE TABLE Measurements (
 )
 
 CREATE TABLE AlertDefinitions (
+    UserId nvarchar(450) not null,
     Id uniqueidentifier not null,
     InstallationId int not null,
     CheckEvery int not null, 
@@ -56,19 +57,29 @@ CREATE Table Alerts (
     RaiseAlert BIT not null DEFAULT 0
 )
 
+CREATE TABLE AspNetUsersInstallations (
+    UserId nvarchar(450) not null,
+    InstallationId int not null
+)
+
 ALTER TABLE Installations ADD CONSTRAINT PK_Installations PRIMARY KEY (Id);
 ALTER TABLE Addresses ADD CONSTRAINT PK_Addresses PRIMARY KEY (AddressId);
 ALTER TABLE Sponsors ADD CONSTRAINT PK_Sponsors PRIMARY KEY (SponsorId);
 ALTER TABLE Measurements ADD CONSTRAINT PK_Measurements PRIMARY KEY (Id);
 ALTER TABLE AlertDefinitions ADD CONSTRAINT PK_AlertDefinitions PRIMARY KEY (Id);
 ALTER TABLE Alerts ADD CONSTRAINT PK_Alerts PRIMARY KEY (Id);
+ALTER TABLE AspNetUsersInstallations ADD CONSTRAINT PK_AspNetUsersInstallations PRIMARY KEY (UserId, InstallationId);
 
 ALTER TABLE Installations ADD CONSTRAINT FK_Installations_Addresses FOREIGN KEY (AddressId) REFERENCES [Addresses](AddressId);
 ALTER TABLE Installations ADD CONSTRAINT FK_Installations_Sponsors FOREIGN KEY (SponsorId) REFERENCES [Sponsors](SponsorId);
 
 ALTER TABLE AlertDefinitions ADD CONSTRAINT FK_AlertDefinitions_Installations FOREIGN KEY (InstallationId) REFERENCES [Installations](Id);
+ALTER TABLE AlertDefinitions ADD CONSTRAINT FK_AlertDefinitions_AspNetUsers FOREIGN KEY (UserId) REFERENCES [AspNetUsers](Id);
 
 ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_Installations FOREIGN KEY (InstallationId) REFERENCES [Installations](Id);
 ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_AlertDefinitions FOREIGN KEY (AlertDefinitionId) REFERENCES [AlertDefinitions](Id);
 
 ALTER TABLE Measurements ADD CONSTRAINT FK_Measurements_Installations FOREIGN KEY (InstallationId) REFERENCES Installations(Id);
+
+ALTER TABLE AspNetUsersInstallations ADD CONSTRAINT FK_AspNetUsersInstallations_AspNetUsers FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id);
+ALTER TABLE AspNetUsersInstallations ADD CONSTRAINT FK_AspNetUsersInstallations_Installations FOREIGN KEY (InstallationId) REFERENCES Installations(Id);
