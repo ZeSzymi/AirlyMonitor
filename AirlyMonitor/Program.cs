@@ -19,8 +19,8 @@ builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVaria
 builder.Host.UseSerilog((context, lc) => lc.ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext());
 
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
-
 builder.Services.AddDbContext<AirlyDbContext>(x => x.UseSqlServer(connectionString));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger(builder.Configuration);
@@ -30,8 +30,8 @@ builder.Services.AddScoped<IMeasurementRepository, MeasurementRepository>();
 builder.Services.AddScoped<IInstallationsRepository, InstallationsRepository>();
 builder.Services.AddScoped<IAlertDefinitionsRepository, AlertDefinitionsRepository>();
 builder.Services.AddScoped<IAlertsRepository, AlertsRepository>();
-builder.Services.AddScoped<IMeasurementsService, MeasurementsService>();
 
+builder.Services.AddScoped<IMeasurementsService, MeasurementsService>();
 builder.Services.AddScoped<IAlertsService, AlertsService>();
 builder.Services.AddScoped<IAlertDefinitionsService, AirlyMonitor.Services.AlertDefinitionsService>();
 builder.Services.AddScoped<IInstallationsService, InstallationsService>();
