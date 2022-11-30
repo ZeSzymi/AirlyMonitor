@@ -33,14 +33,18 @@ namespace IdentityServer.Extensions
                         .RequireProofKeyForCodeExchange();
 
                    options
-                       .AddEphemeralEncryptionKey()
-                       .AddEphemeralSigningKey()
+                        .AddDevelopmentSigningCertificate()
+                       .AddDevelopmentEncryptionCertificate()
                        .DisableAccessTokenEncryption();
 
                    options.RegisterScopes("api");
 
+                   options.SetAccessTokenLifetime(TimeSpan.FromDays(360));
+                   options.SetIdentityTokenLifetime(TimeSpan.FromDays(360));
+
                    options
                     .UseAspNetCore()
+                    .DisableTransportSecurityRequirement()
                     .EnableTokenEndpointPassthrough()
                     .EnableAuthorizationEndpointPassthrough()
                     .EnableUserinfoEndpointPassthrough();

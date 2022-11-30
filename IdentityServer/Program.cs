@@ -1,10 +1,15 @@
 using IdentityServer.Contexts;
 using IdentityServer.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://localhost:5010");
+
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
+
+builder.Host.UseSerilog((context, lc) => lc.WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/.log"), rollingInterval: RollingInterval.Day));
 
 builder.Services.AddDbContext<IdentityDbContext>(options =>
 {
@@ -26,6 +31,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
+
 builder.Services.AddOpenIddictOptions();
 
 var app = builder.Build();
@@ -36,7 +42,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
 

@@ -47,7 +47,7 @@ namespace IdentityServer.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                return Ok(new { ReturnUrl = $"{HttpContext.Request.Host}{model.ReturnUrl}" } );
+                return Ok(new { ReturnUrl = $"http://{HttpContext.Request.Host}{model.ReturnUrl}" } );
             }
            
             return BadRequest("Wrong password");

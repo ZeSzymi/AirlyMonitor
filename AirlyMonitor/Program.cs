@@ -4,6 +4,7 @@ using AirlyInfrastructure.Repositories.Interfaces;
 using AirlyInfrastructure.Services;
 using AirlyInfrastructure.Services.Interfaces;
 using AirlyMonitor.Extensions;
+using AirlyMonitor.Middleware;
 using AirlyMonitor.Models.Configuration;
 using AirlyMonitor.Services;
 using AirlyMonitor.Services.Interface;
@@ -16,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true);
 
-builder.Host.UseSerilog((context, lc) => lc.ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext());
+builder.Host.UseSerilog((context, lc) => lc.WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/.log"), rollingInterval: RollingInterval.Day));
 
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
 builder.Services.AddDbContext<AirlyDbContext>(x => x.UseSqlServer(connectionString));
@@ -57,7 +58,7 @@ builder.Services.AddAuthentication("Bearer")
            .AddJwtBearer("Bearer", options =>
            {
                options.Authority = builder.Configuration.GetSection("Auth:Authority").Get<string>();
-
+               options.RequireHttpsMetadata = false;
                options.TokenValidationParameters = new TokenValidationParameters
                {
                    ValidateAudience = false
@@ -84,7 +85,7 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.AddSwaggerUI(builder.Configuration);
 
-app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseStaticFiles();
 
 app.UseRouting();

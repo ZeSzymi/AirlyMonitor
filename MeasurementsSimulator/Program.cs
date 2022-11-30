@@ -9,6 +9,7 @@ using AirlyInfrastructure.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://localhost:5011");
 
 builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true);
 
@@ -23,7 +24,7 @@ builder.Services.AddHostedService<MeasurementsBackgroundService>();
 
 builder.Services.AddControllers();
 
-builder.Host.UseSerilog((context, lc) => lc.ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext());
+builder.Host.UseSerilog((context, lc) => lc.WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/.log"), rollingInterval: RollingInterval.Day));
 
 var connectionString = builder.Configuration.GetConnectionString("AirlyDb");
 builder.Services.AddDbContext<AirlyDbContext>(x => x.UseSqlServer(connectionString));
