@@ -23,6 +23,5 @@ namespace AirlyMonitor.Services
 
         public Task<Installation> GetInstallationByIdAsync(int id)
             => _httpService.Get<Installation>($"{_options.Url}{AirlyApi.InstallationByIdUrl(id)}");
-
     }
 }

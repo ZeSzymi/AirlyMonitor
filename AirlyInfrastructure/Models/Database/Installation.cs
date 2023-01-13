@@ -1,6 +1,4 @@
-﻿using AirlyInfrastructure.Models.Database;
-
-namespace AirlyMonitor.Models.Database
+﻿namespace AirlyMonitor.Models.Database
 {
     public class Installation
     {

@@ -46,10 +46,8 @@ namespace IdentityServer.Controllers
             var request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
-            // Retrieve the user principal stored in the authentication cookie.
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            // If the user principal can't be extracted, redirect the user to the login page.
             if (!result.Succeeded)
             {
                 return Challenge(
@@ -61,10 +59,8 @@ namespace IdentityServer.Controllers
                     });
             }
 
-            // Create a new claims principal
             var claims = new List<Claim>
             {
-                // 'subject' claim which is required
                 new Claim(OpenIddictConstants.Claims.Subject, result.Principal.Identity.Name),
                 new Claim(ClaimTypes.NameIdentifier, result.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
                 new Claim(ClaimTypes.Name, result.Principal.Identity.Name).SetDestinations(OpenIddictConstants.Destinations.AccessToken)
@@ -74,10 +70,8 @@ namespace IdentityServer.Controllers
 
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            // Set requested scopes (this is not done automatically)
             claimsPrincipal.SetScopes(request.GetScopes());
 
-            // Signing in with the OpenIddict authentiction scheme trigger OpenIddict to issue a code (which can be exchanged for an access token)
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
     }

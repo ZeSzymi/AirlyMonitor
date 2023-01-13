@@ -15,7 +15,7 @@ namespace AirlyMonitor.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<string> Get()
         {
             _logger.LogInformation("App is alive");
             return Ok("App is alive");

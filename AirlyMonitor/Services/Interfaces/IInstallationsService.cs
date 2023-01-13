@@ -1,13 +1,15 @@
 ﻿using AirlyInfrastructure.Models.Database;
-using AirlyMonitor.Models.Database;
+using AirlyMonitor.Models.Dtos;
+using AirlyMonitor.Models.QueryParams;
 
 namespace AirlyMonitor.Services.Interfaces
 {
     public interface IInstallationsService
     {
-        Task<Installation> AddInstallationIfDoesNotExistAsync(int installationId);
+        Task<InstallationDto> AddInstallationIfDoesNotExistAsync(int installationId);
         Task<UserInstallation> AddUserInstallationIfDoesNotExistAsync(string userId, int installationId);
-        Task<Installation> MarkInstallationAsync(string userId, int installationId);
-        Task<List<Installation>> GetUserInstallations(string userId);
+        Task<InstallationDto> MarkInstallationAsync(string userId, int installationId);
+        Task<List<InstallationDto>> GetNearestInstallationsAsync(GetInstallationsQueryParams queryParams);
+        Task<List<InstallationDto>> GetUserInstallations(string userId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using AirlyInfrastructure.Services.Interfaces;
+﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace AirlyMonitor.Controllers
         }
 
         [HttpGet("{alertDefinitionId:guid}")]
-        public async Task<IActionResult> GetAlerts(Guid alertDefinitionId)
+        public async Task<ActionResult<List<Alert>>> GetAlerts(Guid alertDefinitionId)
         {
             var alertDefinitions = await _alertsService.GetAlertsForAlertDefinitionId(alertDefinitionId);
             return Ok(alertDefinitions);
