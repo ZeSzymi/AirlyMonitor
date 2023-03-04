@@ -8,6 +8,7 @@ namespace AirlyMonitor.Models.Dtos
         public int InstallationId { get; set; }
         public int CheckEvery { get; set; }
         public List<AlertRule> Rules { get; set; }
+        public double? AQIThreshold { get; set; }
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
 
@@ -17,7 +18,8 @@ namespace AirlyMonitor.Models.Dtos
             Id = Id ?? Guid.Empty,
             InstallationId = InstallationId,
             CheckEvery = CheckEvery,
-            AlertRules = Rules,
+            AlertRules = Rules ?? new List<AlertRule>(),
+            AQIThreshold = AQIThreshold,
             From = From,
             To = To
         };

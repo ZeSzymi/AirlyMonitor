@@ -18,5 +18,8 @@ namespace AirlyInfrastructure.Services
 
         public Task<List<Alert>> GetAlertsForAlertDefinitionId(Guid alarmDefinitionId) =>
             _alertsRepository.GetAlertsForAlertDefinitionId(alarmDefinitionId);
+
+        public Task<List<Alert>> GetRaisedAlertsForAlertDefinitionId(Guid alarmDefinitionId) =>
+            _alertsRepository.GetAlertsForAlertDefinitionId(alarmDefinitionId);
     }
 }

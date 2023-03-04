@@ -27,6 +27,11 @@ namespace AirlyInfrastructure.Repositories
         public Task<List<Alert>> GetAlertsForAlertDefinitionId(Guid alarmDefinitionId)
             => _airlyDbContext.Alerts.Where(a => a.AlertDefinitionId == alarmDefinitionId).ToListAsync();
 
+        public Task<List<Alert>> GetRaisedAlertsForAlertDefinitionId(Guid alarmDefinitionId)
+            => _airlyDbContext.Alerts
+            .Where(a => a.AlertDefinitionId == alarmDefinitionId && a.RaiseAlert == true && a.PreviousRaisedAlert == false)
+            .ToListAsync();
+
         public Task<List<Alert>> GetLatestAlertsAsync(List<Guid> alarmDefinitionIds)
             => _airlyDbContext.Alerts           
             .Where(a => alarmDefinitionIds.Contains(a.AlertDefinitionId))

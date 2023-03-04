@@ -17,9 +17,16 @@ namespace AirlyMonitor.Controllers
         }
 
         [HttpGet("{alertDefinitionId:guid}")]
-        public async Task<ActionResult<List<Alert>>> GetAlerts(Guid alertDefinitionId)
+        public async Task<ActionResult<List<Alert>>> GetAllAlerts(Guid alertDefinitionId)
         {
             var alertDefinitions = await _alertsService.GetAlertsForAlertDefinitionId(alertDefinitionId);
+            return Ok(alertDefinitions);
+        }
+
+        [HttpGet("/raised/{alertDefinitionId:guid}")]
+        public async Task<ActionResult<List<Alert>>> GetRaisedAlerts(Guid alertDefinitionId)
+        {
+            var alertDefinitions = await _alertsService.GetRaisedAlertsForAlertDefinitionId(alertDefinitionId);
             return Ok(alertDefinitions);
         }
     }

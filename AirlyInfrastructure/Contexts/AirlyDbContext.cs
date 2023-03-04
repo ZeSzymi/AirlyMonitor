@@ -14,6 +14,7 @@ namespace AirlyInfrastructure.Contexts
         public DbSet<AlertDefinition> AlertDefinitions { get; set; }
         public DbSet<Alert> Alerts { get; set; }
         public DbSet<UserInstallation> UserInstallations { get; set; }
+        public DbSet<User> Users { get; set; }
         public AirlyDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +34,7 @@ namespace AirlyInfrastructure.Contexts
                 measurement.ToTable("Measurements");
                 measurement.HasKey(m => m.Id);
                 measurement.Ignore(m => m.MeasurementValues);
+                measurement.Ignore(m => m.AQI);
             });
 
             modelBuilder.Entity<Address>(measurement =>
@@ -59,6 +61,13 @@ namespace AirlyInfrastructure.Contexts
                 alert.ToTable("Alerts");
                 alert.HasKey(i => i.Id);
                 alert.Ignore(a => a.AlertReports);
+                alert.Ignore(a => a.AQIAlertReports);
+            });
+
+            modelBuilder.Entity<User>(user =>
+            {
+                user.ToTable("AspNetUsers");
+                user.HasKey(i => i.Id);
             });
 
             modelBuilder.Entity<UserInstallation>(userInstallation =>

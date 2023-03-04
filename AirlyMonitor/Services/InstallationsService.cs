@@ -15,7 +15,7 @@ namespace AirlyMonitor.Services
         private readonly IMeasurementRepository _measurementRepository;
 
         public InstallationsService(
-            IInstallationsRepository installationsRepository, 
+            IInstallationsRepository installationsRepository,
             IAirlyApiService airlyApiService,
             IMeasurementRepository measurementRepository)
         {
@@ -27,7 +27,7 @@ namespace AirlyMonitor.Services
         public async Task<InstallationDto> AddInstallationIfDoesNotExistAsync(int installationId)
         {
             var installation = await _installationsRepository.GetInstallationAsync(installationId);
-  
+
             if (installation == null)
             {
                 installation = await _airlyApiService.GetInstallationByIdAsync(installationId);
@@ -75,16 +75,11 @@ namespace AirlyMonitor.Services
 
         public async Task<List<InstallationDto>> GetUserInstallations(string userId)
         {
-            try
-            {
-                var installations = await _installationsRepository.GetInstallationsForUserAsync(userId);
-                var installationIds = installations.Select(i => i.Id).ToList();
-                var latestMeasurement = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
-                return installations.Select(installation => new InstallationDto(installation, latestMeasurement)).ToList();
-            } catch(Exception ex)
-            {
-                return null;
-            }
+
+            var installations = await _installationsRepository.GetInstallationsForUserAsync(userId);
+            var installationIds = installations.Select(i => i.Id).ToList();
+            var latestMeasurement = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
+            return installations.Select(installation => new InstallationDto(installation, latestMeasurement)).ToList();
         }
 
         public double CalculateDistance(Location point1, Location point2)

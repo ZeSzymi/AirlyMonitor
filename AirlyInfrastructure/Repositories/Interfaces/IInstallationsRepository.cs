@@ -11,5 +11,6 @@ namespace AirlyInfrastructure.Repositories.Interfaces
         Task<UserInstallation> AddUserInstallationAsync(UserInstallation userInstallation);
         Task<UserInstallation?> GetUserInstallationAsync(string userId, int installationId);
         Task<List<Installation>> GetInstallationsForUserAsync(string userId);
+        Task<List<Installation>> GetInstallationsAsync(List<int> installationIds);
     }
 }

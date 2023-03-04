@@ -1,5 +1,4 @@
-﻿using AirlyInfrastructure.Database;
-using AirlyInfrastructure.Services.Interfaces;
+﻿using AirlyInfrastructure.Services.Interfaces;
 using AlertsMonitor.Services.Interfaces;
 
 namespace AlertsMonitor.Services
@@ -10,6 +9,7 @@ namespace AlertsMonitor.Services
         private readonly IMeasurementsService _measurementsService;
         private readonly IAlertsGeneratorService _alertsGeneratorService;
         private readonly IAlertDefinitionService _alertDefinitionService;
+        private readonly IMessagesCreateorService _messagesCreateorService;
         private readonly ILogger<AlertsMonitorService> _logger;
 
         public AlertsMonitorService(
@@ -17,6 +17,7 @@ namespace AlertsMonitor.Services
             IMeasurementsService measurementsService, 
             IAlertsGeneratorService alertsGeneratorService, 
             IAlertDefinitionService alertDefinitionService,
+            IMessagesCreateorService messagesCreateorService,
             ILogger<AlertsMonitorService> logger
             )
         {
@@ -24,6 +25,7 @@ namespace AlertsMonitor.Services
             _measurementsService = measurementsService;
             _alertsGeneratorService = alertsGeneratorService;
             _alertDefinitionService = alertDefinitionService;
+            _messagesCreateorService = messagesCreateorService;
             _logger = logger;
         }
 
@@ -53,7 +55,8 @@ namespace AlertsMonitor.Services
 
                 var installationIds = alertDefinitionsToEvaluate.Select(ad => ad.InstallationId).ToList();
                 var measurements = await _measurementsService.GetMeasurementsAsync(installationIds);
-                await _alertsGeneratorService.AddAlertsAsync(alertDefinitionsToEvaluate, measurements, now);
+                var addedAlerts = await _alertsGeneratorService.AddAlertsAsync(alertDefinitionsToEvaluate, alerts, measurements, now);
+                await _messagesCreateorService.SendMessages(addedAlerts, alertDefinitions);
                 _logger.LogInformation("Alert evaluation finished");
             } catch (Exception e)
             {

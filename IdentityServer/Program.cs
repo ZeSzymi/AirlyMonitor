@@ -1,5 +1,6 @@
 using IdentityServer.Contexts;
 using IdentityServer.Extensions;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

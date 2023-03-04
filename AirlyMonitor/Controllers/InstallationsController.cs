@@ -1,7 +1,9 @@
-﻿using AirlyMonitor.Models.Dtos;
+﻿using AirlyInfrastructure.Models.Messages;
+using AirlyMonitor.Models.Dtos;
 using AirlyMonitor.Models.QueryParams;
 using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

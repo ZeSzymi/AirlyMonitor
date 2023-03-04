@@ -6,5 +6,6 @@ namespace AirlyInfrastructure.Services.Interfaces
     {
         Task<List<Alert>> GetLatestAlertsAsync(List<Guid> alertDefinitionIds);
         Task<List<Alert>> GetAlertsForAlertDefinitionId(Guid alarmDefinitionId);
+        Task<List<Alert>> GetRaisedAlertsForAlertDefinitionId(Guid alarmDefinitionId);
     }
 }

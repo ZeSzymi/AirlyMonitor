@@ -8,5 +8,6 @@ namespace AirlyInfrastructure.Repositories.Interfaces
         Task<List<Alert>> GetAlertsAsync();
         Task<List<Alert>> GetLatestAlertsAsync(List<Guid> alarmDefinitionIds);
         Task<List<Alert>> GetAlertsForAlertDefinitionId(Guid alarmDefinitionId);
+        Task<List<Alert>> GetRaisedAlertsForAlertDefinitionId(Guid alarmDefinitionId);
     }
 }

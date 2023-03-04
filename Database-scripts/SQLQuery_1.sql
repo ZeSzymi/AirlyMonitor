@@ -44,6 +44,7 @@ CREATE TABLE AlertDefinitions (
     Rules VARCHAR(MAX) not null,
     Deleted BIT not null DEFAULT 0,
     Active BIT not null DEFAULT 1,
+    AQIThreshold Float null,
     [From] DATETIME2 null,
     [To] DATETIME2 null
 )
@@ -54,7 +55,9 @@ CREATE Table Alerts (
     InstallationId int not null,
     [DateTime] DATETIME2 not null,
     Reports VARCHAR(MAX) not null,
-    RaiseAlert BIT not null DEFAULT 0
+    AQIReport VARCHAR(MAX) not null,
+    RaiseAlert BIT not null DEFAULT 0,
+    PreviousRaisedAlert BIT not null DEFAULT 0
 )
 
 CREATE TABLE AspNetUsersInstallations (

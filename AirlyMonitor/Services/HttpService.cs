@@ -52,7 +52,7 @@ namespace AirlyMonitor.Services
             return null;
         }
 
-        public async Task<T> Post<T, U>(string url, U body) where T : class
+        public async Task<T> Post<T, U>(string url, U body, string token = null) where T : class
         {
             _logger.LogInformation($"sending POST request to {url}");
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, Application.Json);
@@ -61,6 +61,7 @@ namespace AirlyMonitor.Services
                 Headers =
                 {
                     { "apikey", _options.ApiKey },
+                    { "Authorization", token }
                 },
                 Content = content
             };
@@ -75,7 +76,14 @@ namespace AirlyMonitor.Services
                 using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
 
                 _logger.LogInformation($"message sent successfully");
-                return await JsonSerializer.DeserializeAsync<T>(contentStream);
+                try
+                {
+                    return await JsonSerializer.DeserializeAsync<T>(contentStream);
+                }
+                catch
+                {
+                    return null; 
+                }
             }
 
             _logger.LogError($"Error while sending message status code: {httpResponseMessage.StatusCode}");

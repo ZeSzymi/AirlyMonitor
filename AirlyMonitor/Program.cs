@@ -1,4 +1,6 @@
 using AirlyInfrastructure.Contexts;
+using AirlyInfrastructure.Extentions;
+using AirlyInfrastructure.Models.Options;
 using AirlyInfrastructure.Repositories;
 using AirlyInfrastructure.Repositories.Interfaces;
 using AirlyInfrastructure.Services;
@@ -37,9 +39,15 @@ builder.Services.AddScoped<IAlertsService, AlertsService>();
 builder.Services.AddScoped<IAlertDefinitionsService, AirlyMonitor.Services.AlertDefinitionsService>();
 builder.Services.AddScoped<IInstallationsService, InstallationsService>();
 builder.Services.AddScoped<IAirlyApiService, AirlyApiService>();
+builder.Services.AddScoped<IPushNotificationsHttpService, PushNotificationsHttpService>();
 builder.Services.AddScoped<IHttpService, HttpService>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<AirlyApiOptions>(builder.Configuration.GetSection("AirlyApi"));
+
+var rabbitConfiguration = builder.Configuration.GetSection("RabbitConfiguration").Get<RabbitConfigurationOptions>();
+builder.Services.RegisterMassTransit(rabbitConfiguration);
+
 
 builder.Services.AddCors(options =>
 {

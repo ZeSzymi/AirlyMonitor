@@ -1,5 +1,6 @@
 ﻿using AirlyInfrastructure.Database;
 using AirlyInfrastructure.Repositories.Interfaces;
+using AirlyInfrastructure.Services.Interfaces;
 using AlertsMonitor.Services.Interfaces;
 
 namespace AlertsMonitor.Services
@@ -9,13 +10,15 @@ namespace AlertsMonitor.Services
         private readonly IAlertsRepository _alertsRepository;
         private readonly ILogger<AlertsGeneratorService> _logger;
 
-        public AlertsGeneratorService(IAlertsRepository alertsRepository, ILogger<AlertsGeneratorService> logger)
+        public AlertsGeneratorService(
+            IAlertsRepository alertsRepository, 
+            ILogger<AlertsGeneratorService> logger)
         {
             _alertsRepository = alertsRepository;
             _logger = logger;
         }
 
-        public async Task<List<Alert>> AddAlertsAsync(List<AlertDefinition> alertDefinitions, List<Measurement> measurements, DateTime utcNow)
+        public async Task<List<Alert>> AddAlertsAsync(List<AlertDefinition> alertDefinitions, List<Alert> previousAlerts, List<Measurement> measurements, DateTime utcNow)
         {
             var alerts = new List<Alert>();
 
@@ -29,21 +32,43 @@ namespace AlertsMonitor.Services
                     continue;
                 }
 
-                var alertReports = alertDefinition.AlertRules
-                    .Select(alertRule => alertRule.GetAlertReport(measurement.MeasurementValues.FirstOrDefault(mv => mv.Name == alertRule.MeasurementName)))
-                    .Where(a => a != null)
-                    .ToList();
+                var previousAlert = previousAlerts.FirstOrDefault(a => a.AlertDefinitionId == alertDefinition.Id);
+                Alert alert;
 
-                var alert = new Alert
+                if (alertDefinition.AQIThreshold != null)
                 {
-                    DateTime = utcNow,
-                    AlertDefinitionId = alertDefinition.Id,
-                    InstallationId = alertDefinition.InstallationId,
-                    AlertReports = alertReports,
-                    RaiseAlert = alertReports.Any(r => r.RaiseAlert)
-                };
+                    var alertReport = alertDefinition.GetAQIAlertReport(measurement.AQI);
 
-                _logger.LogInformation($"Alert report: {alert.Reports}");
+                    alert = new Alert
+                    {
+                        DateTime = utcNow,
+                        AlertDefinitionId = alertDefinition.Id,
+                        InstallationId = alertDefinition.InstallationId,
+                        AlertReports = null,
+                        AQIAlertReports = alertReport,
+                        PreviousRaisedAlert = previousAlert?.RaiseAlert ?? false,
+                        RaiseAlert = alertReport.RaiseAlert
+                    };
+
+                } else
+                {
+                    var alertReports = alertDefinition.AlertRules
+                   .Select(alertRule => alertRule.GetAlertReport(measurement.MeasurementValues.FirstOrDefault(mv => mv.Name == alertRule.MeasurementName)))
+                   .Where(a => a != null)
+                   .ToList();
+
+                    alert = new Alert
+                    {
+                        DateTime = utcNow,
+                        AlertDefinitionId = alertDefinition.Id,
+                        InstallationId = alertDefinition.InstallationId,
+                        AlertReports = alertReports,
+                        PreviousRaisedAlert = previousAlert?.RaiseAlert ?? false,
+                        RaiseAlert = alertReports.Any(r => r.RaiseAlert)
+                    };
+                }
+
+                _logger.LogInformation($"Alert report: {alert.Reports} | AQI alert report: {alert.AQIReport}");
 
                 alerts.Add(alert);
             }
