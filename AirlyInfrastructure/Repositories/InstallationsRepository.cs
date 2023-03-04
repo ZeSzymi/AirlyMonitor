@@ -47,7 +47,14 @@ namespace AirlyInfrastructure.Repositories
             => _context.UserInstallations.FirstOrDefaultAsync(u => u.UserId == userId && u.InstallationId == installationId);
 
         public Task<List<Installation>> GetInstallationsForUserAsync(string userId)
-            => _context.UserInstallations.Include(u => u.Installation).Where(u => u.UserId == userId).Select(u => u.Installation).ToListAsync();
+            => _context.UserInstallations
+            .Include(u => u.Installation)
+            .ThenInclude(i => i.Sponsor)
+            .Include(u => u.Installation)
+            //.ThenInclude(i => i.Address)
+            .Where(u => u.UserId == userId)
+            .Select(u => u.Installation)
+            .ToListAsync();
 
         public Task<Installation?> GetInstallationAsync(int installationId) => _context
             .Installations

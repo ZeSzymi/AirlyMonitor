@@ -1,16 +1,22 @@
-﻿using AirlyMonitor.Models.Database;
+﻿using AirlyInfrastructure.Database;
+using AirlyMonitor.Models.Database;
 
 namespace AirlyMonitor.Models.Dtos
 {
     public class InstallationDto
     {
-        public InstallationDto(Installation installation)
+        public InstallationDto(Installation installation, List<Measurement>? measurements = null)
         {
+            var measurement = measurements?.FirstOrDefault(m => m.InstallationId == installation.Id);
             Id = installation.Id;
             Address = installation.Address;
             Elevation = installation.Elevation;
             Sponsor = installation.Sponsor;
             Location = installation.Location;
+            if (measurement != null)
+            {
+                Measurement = new MeasurementDto(measurement);
+            }
         }
 
         public InstallationDto()
@@ -23,5 +29,6 @@ namespace AirlyMonitor.Models.Dtos
         public Sponsor Sponsor { get; set; }
         public Location Location { get; set; }
         public double DistanceToInstallationMeters { get; set; }
+        public MeasurementDto? Measurement { get; set; }
     }
 }

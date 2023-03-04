@@ -12,11 +12,16 @@ namespace AirlyMonitor.Services
     {
         private readonly IInstallationsRepository _installationsRepository;
         private readonly IAirlyApiService _airlyApiService;
+        private readonly IMeasurementRepository _measurementRepository;
 
-        public InstallationsService(IInstallationsRepository installationsRepository, IAirlyApiService airlyApiService)
+        public InstallationsService(
+            IInstallationsRepository installationsRepository, 
+            IAirlyApiService airlyApiService,
+            IMeasurementRepository measurementRepository)
         {
             _installationsRepository = installationsRepository;
             _airlyApiService = airlyApiService;
+            _measurementRepository = measurementRepository;
         }
 
         public async Task<InstallationDto> AddInstallationIfDoesNotExistAsync(int installationId)
@@ -56,7 +61,9 @@ namespace AirlyMonitor.Services
         public async Task<List<InstallationDto>> GetNearestInstallationsAsync(GetInstallationsQueryParams queryParams)
         {
             var installations = await _airlyApiService.GetNearestInstallationsAsync(queryParams);
-            return installations.Select(installation => new InstallationDto(installation)
+            var installationIds = installations.Select(i => i.Id).ToList();
+            var latestMeasurement = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
+            return installations.Select(installation => new InstallationDto(installation, latestMeasurement)
             {
                 DistanceToInstallationMeters = CalculateDistance(installation.Location, new Location
                 {
@@ -68,8 +75,16 @@ namespace AirlyMonitor.Services
 
         public async Task<List<InstallationDto>> GetUserInstallations(string userId)
         {
-            var installations = await _installationsRepository.GetInstallationsForUserAsync(userId);
-            return installations.Select(installation => new InstallationDto(installation)).ToList();
+            try
+            {
+                var installations = await _installationsRepository.GetInstallationsForUserAsync(userId);
+                var installationIds = installations.Select(i => i.Id).ToList();
+                var latestMeasurement = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
+                return installations.Select(installation => new InstallationDto(installation, latestMeasurement)).ToList();
+            } catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public double CalculateDistance(Location point1, Location point2)

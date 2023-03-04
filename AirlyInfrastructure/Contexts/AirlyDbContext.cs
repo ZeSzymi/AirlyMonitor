@@ -23,6 +23,8 @@ namespace AirlyInfrastructure.Contexts
                 installation.ToTable("Installations");
                 installation.HasKey(i => i.Id);
                 installation.Ignore(i => i.Location);
+                installation.HasOne(i => i.Address).WithOne();
+                installation.HasOne(i => i.Sponsor).WithOne();
             });
 
 

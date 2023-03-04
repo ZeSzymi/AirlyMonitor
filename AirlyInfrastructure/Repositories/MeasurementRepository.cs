@@ -32,5 +32,12 @@ namespace AirlyInfrastructure.Repositories
             _context.Measurements
                 .Where(m => m.InstallationId == installationId)
                 .ToListAsync();
+
+        public Task<List<Measurement?>> GetLatestMeasurementsAsync(List<int> installationIds) =>
+            _context.Measurements
+                .Where(installation => installationIds.Contains(installation.InstallationId))
+                .GroupBy(m => m.InstallationId)
+                .Select(g => g.OrderByDescending(m => m.TillDateTime).FirstOrDefault())
+                .ToListAsync();
     }
 }
