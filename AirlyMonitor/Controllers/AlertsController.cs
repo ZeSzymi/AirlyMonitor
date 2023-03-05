@@ -23,7 +23,7 @@ namespace AirlyMonitor.Controllers
             return Ok(alertDefinitions);
         }
 
-        [HttpGet("/raised/{alertDefinitionId:guid}")]
+        [HttpGet("raised/{alertDefinitionId:guid}")]
         public async Task<ActionResult<List<Alert>>> GetRaisedAlerts(Guid alertDefinitionId)
         {
             var alertDefinitions = await _alertsService.GetRaisedAlertsForAlertDefinitionId(alertDefinitionId);
