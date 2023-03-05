@@ -15,16 +15,15 @@ namespace PushNotificationsService.Services
         public FireBaseCloudMessagesService(ILogger<FireBaseCloudMessagesService> logger)
         {
             _logger = logger;
-        }
-
-        public async Task SendNotificationAsync<T>(string userId, string title, T body)
-        {
             var credentials = GoogleCredential.FromFile("credentials.json");
             FirebaseApp.Create(new AppOptions()
             {
                 Credential = credentials,
             });
+        }
 
+        public async Task SendNotificationAsync<T>(string userId, string title, T body)
+        {
             var token = _deviceTokens.GetValueOrDefault(userId);
 
             if (token == null)
@@ -32,7 +31,6 @@ namespace PushNotificationsService.Services
                 return;
             }
 
-            // Set up the message to be sent
             var message = new Message()
             {
                 Notification = new Notification()
@@ -45,15 +43,11 @@ namespace PushNotificationsService.Services
 
             try
             {
-                // Send the message
                 var response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
-
-                // Print the response
                 _logger.LogInformation($"Message sent successfully: {response}");
             }
             catch (FirebaseMessagingException ex)
             {
-                // Handle any errors that occur during sending
                 _logger.LogError($"Error sending message: {ex.Message}", ex);
             }
         }
@@ -66,7 +60,6 @@ namespace PushNotificationsService.Services
 
                 try
                 {
-                    // Send a message to the device
                     var response = await FirebaseMessaging.DefaultInstance.SendAsync(new Message()
                     {
                         Token = deviceToken,
@@ -76,11 +69,8 @@ namespace PushNotificationsService.Services
                 }
                 catch (FirebaseMessagingException ex)
                 {
-                    // If the message sending fails, the device token is no longer valid
                     _logger.LogInformation($"Device token {deviceToken} is invalid. Error message: {ex.Message}");
                     RemoveDeviceToken(deviceTokenEntry.Key);
-
-                    // Remove the invalid device token from your app server's database here
                 }
             }
         }
@@ -88,5 +78,7 @@ namespace PushNotificationsService.Services
         public void AddDeviceToken(string userId, string deviceToken) => _deviceTokens[userId] = deviceToken;
 
         public void RemoveDeviceToken(string userId) => _deviceTokens.Remove(userId, out _);
+
+        public Dictionary<string, string> GetDeviceTokens() => _deviceTokens.ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 }

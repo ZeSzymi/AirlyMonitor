@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AirlyInfrastructure.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PushNotificationsService.Services.Interfaces;
 
@@ -16,10 +17,17 @@ namespace PushNotificationsService.Controllers
         }
 
         [HttpPost]
-        public IActionResult Get(string token)
+        public IActionResult AddDeviceToken([FromBody] AddDeviceTokenDto tokenDto)
         {
-            _firebaseCloudMessageService.AddDeviceToken(User.Identity.Name, token);
+            _firebaseCloudMessageService.AddDeviceToken(User.Identity.Name, tokenDto.Token);
             return Ok("Token added");
+        }
+
+        [HttpGet("all")]
+        public IActionResult Get()
+        {
+            var deviceTokens = _firebaseCloudMessageService.GetDeviceTokens();
+            return Ok(deviceTokens);
         }
     }
 }

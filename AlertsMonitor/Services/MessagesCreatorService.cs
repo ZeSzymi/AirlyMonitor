@@ -1,4 +1,5 @@
 ﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Models.Database;
 using AirlyInfrastructure.Models.Messages;
 using AirlyInfrastructure.Repositories.Interfaces;
 using AlertsMonitor.Services.Interfaces;
@@ -37,8 +38,8 @@ namespace AlertsMonitor.Services
                 var alertDefinition = filteredAlertDefinitions.First(alertDefinition => alertDefinition.Id == alert.AlertDefinitionId);
                 var installation = installations.First(installation => installation.Id == alertDefinition.InstallationId);
                 var user = users.First(user => user.Id == alertDefinition.UserId);
-                var alertReports = alert.AlertReports.Where(alertReport => alertReport.RaiseAlert == true);
-                var firstAlertReport = alertReports.FirstOrDefault() ?? alert.AQIAlertReports;
+                var alertReports = alert.AlertReports.Where(alertReport => alertReport.RaiseAlert == true).ToList();
+                var firstAlertReport = alertReports.FirstOrDefault() ?? alert.AQIAlertReport;
 
                 var messageText = $"Installation in {installation.Address.DisplayAddress1} {installation.Address.DisplayAddress2} has raised alert for {firstAlertReport.MeasurementName.ToLower()}";
                 var detailedMessage = string.Empty;
@@ -46,6 +47,11 @@ namespace AlertsMonitor.Services
                 foreach (var alertReport in alertReports)
                 {
                     detailedMessage += $"${alertReport.GetReportMessage()}\n";
+                }
+
+                if (alert.AQIAlertReport != null)
+                {
+                    detailedMessage = firstAlertReport.GetReportMessage();
                 }
 
                 var message = new PushNotificationMessage

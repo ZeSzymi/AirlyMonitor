@@ -1,6 +1,7 @@
 ﻿using AirlyInfrastructure.Database;
 using AirlyInfrastructure.Models.Constants;
 using AirlyInfrastructure.Services.Interfaces;
+using AirlyMonitor.Models.QueryParams;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,9 +35,9 @@ namespace AirlyMonitor.Controllers
         }
 
         [HttpGet("{installationId}")]
-        public async Task<ActionResult<List<Measurement>>> GetMeasurements(int installationId)
+        public async Task<ActionResult<List<Measurement>>> GetMeasurements(int installationId, [FromQuery] GetMeasurementsQueryParams queryParams)
         {
-            var measurements = await _measurementsService.GetMeasurementsAsync(installationId);
+            var measurements = await _measurementsService.GetMeasurementsAsync(installationId, queryParams.From, queryParams.To);
             return Ok(measurements);
         }
     }

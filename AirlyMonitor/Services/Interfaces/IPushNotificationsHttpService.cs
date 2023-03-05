@@ -1,7 +1,10 @@
-﻿namespace AirlyMonitor.Services.Interfaces
+﻿using AirlyInfrastructure.Models.Dtos;
+
+namespace AirlyMonitor.Services.Interfaces
 {
     public interface IPushNotificationsHttpService
     {
-        Task<string> AddDeviceToken(string deviceToken, string token);
+        Task<string> AddDeviceToken(AddDeviceTokenDto deviceToken, string token);
+        Task<Dictionary<string, string>> GetAllDeviceTokens(string token);
     }
 }

@@ -19,7 +19,7 @@ namespace AirlyInfrastructure.Extentions
                         h.Password(rabbitConfiguration.Password);
                     });
 
-                    cfg.Message<PushNotificationMessage>(x => x.SetEntityName("PushNotificationMessage"));
+                    cfg.Message<PushNotificationMessage>(c => c.SetEntityName("PushNotificationMessage"));
 
                     cfg.ConfigureEndpoints(context);
                 });

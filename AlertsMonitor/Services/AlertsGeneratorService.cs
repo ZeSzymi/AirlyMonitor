@@ -45,7 +45,7 @@ namespace AlertsMonitor.Services
                         AlertDefinitionId = alertDefinition.Id,
                         InstallationId = alertDefinition.InstallationId,
                         AlertReports = null,
-                        AQIAlertReports = alertReport,
+                        AQIAlertReport = alertReport,
                         PreviousRaisedAlert = previousAlert?.RaiseAlert ?? false,
                         RaiseAlert = alertReport.RaiseAlert
                     };

@@ -61,7 +61,7 @@ namespace AirlyInfrastructure.Contexts
                 alert.ToTable("Alerts");
                 alert.HasKey(i => i.Id);
                 alert.Ignore(a => a.AlertReports);
-                alert.Ignore(a => a.AQIAlertReports);
+                alert.Ignore(a => a.AQIAlertReport);
             });
 
             modelBuilder.Entity<User>(user =>

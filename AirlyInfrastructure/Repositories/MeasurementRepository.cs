@@ -28,9 +28,9 @@ namespace AirlyInfrastructure.Repositories
             .Select(ms => ms.OrderByDescending(m => m.FromDateTime).First())
             .ToListAsync();
 
-        public Task<List<Measurement>> GetMeasurementsAsync(int installationId) =>
+        public Task<List<Measurement>> GetMeasurementsAsync(int installationId, DateTime from, DateTime to) =>
             _context.Measurements
-                .Where(m => m.InstallationId == installationId)
+                .Where(m => m.InstallationId == installationId && m.FromDateTime >= from && m.TillDateTime <= to)
                 .ToListAsync();
 
         public Task<List<Measurement?>> GetLatestMeasurementsAsync(List<int> installationIds) =>

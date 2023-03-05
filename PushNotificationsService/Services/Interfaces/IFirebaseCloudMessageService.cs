@@ -6,5 +6,6 @@
         void AddDeviceToken(string userId, string deviceToken);
         void RemoveDeviceToken(string userId);
         Task CheckDeviceTokenValidityAsync();
+        Dictionary<string, string> GetDeviceTokens();
     }
 }

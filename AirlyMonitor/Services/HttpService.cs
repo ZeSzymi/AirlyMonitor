@@ -20,7 +20,7 @@ namespace AirlyMonitor.Services
             _options = options.Value;
         }
 
-        public async Task<T> Get<T>(string url) where T : class
+        public async Task<T> Get<T>(string url, string token = null) where T : class
         {
             _logger.LogInformation($"sending GET request to {url}");
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url)
@@ -28,6 +28,7 @@ namespace AirlyMonitor.Services
                 Headers =
                 {
                     { "apikey", _options.ApiKey },
+                    { "Authorization", token }
                 }
             };
 
@@ -66,7 +67,7 @@ namespace AirlyMonitor.Services
                 Content = content
             };
 
-           
+
             var httpClient = _httpClientFactory.CreateClient();
             var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
 
@@ -82,7 +83,7 @@ namespace AirlyMonitor.Services
                 }
                 catch
                 {
-                    return null; 
+                    return null;
                 }
             }
 

@@ -16,7 +16,11 @@ namespace AirlyInfrastructure.Services
         public Task<List<Measurement>> GetMeasurementsAsync(List<int> installationIds) =>
              _measurementRepository.GetMeasurementsAsync(installationIds);
 
-        public Task<List<Measurement>> GetMeasurementsAsync(int installationIds) =>
-             _measurementRepository.GetMeasurementsAsync(installationIds);
+        public Task<List<Measurement>> GetMeasurementsAsync(int installationIds, DateTime? from, DateTime? to) {
+            var fromDateTime = from ?? DateTime.UtcNow.AddDays(-1);
+            var toDateTime = to ?? DateTime.UtcNow.AddDays(1);
+            return _measurementRepository.GetMeasurementsAsync(installationIds, fromDateTime, toDateTime);
+        }
+             
     }
 }

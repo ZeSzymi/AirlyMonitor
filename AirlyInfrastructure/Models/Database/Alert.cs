@@ -20,9 +20,9 @@ namespace AirlyInfrastructure.Database
             set => Reports = JsonConvert.SerializeObject(value ?? new List<AlertReport>());
         }
 
-        public AlertReport AQIAlertReports
+        public AlertReport AQIAlertReport
         {
-            get => JsonConvert.DeserializeObject<AlertReport>(Reports);
+            get => JsonConvert.DeserializeObject<AlertReport>(AQIReport);
             set => AQIReport = JsonConvert.SerializeObject(value ?? new AlertReport());
         }
     }
