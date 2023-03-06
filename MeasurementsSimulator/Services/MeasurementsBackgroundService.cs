@@ -9,7 +9,7 @@ namespace MeasurementsSimulator.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var timer = new PeriodicTimer(TimeSpan.FromMinutes(30));
+            var timer = new PeriodicTimer(TimeSpan.FromMinutes(10));
             while (await timer.WaitForNextTickAsync(stoppingToken))
             {
                 var utcNow = DateTime.UtcNow;

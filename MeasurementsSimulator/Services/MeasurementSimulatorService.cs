@@ -28,9 +28,13 @@ namespace MeasurementsSimulator.Services
             try
             {
                 var installationIds = (await _installationRepository.GetInstallationIdsAsync()).ToList();
-                _logger.LogInformation($"Generating measurements for installations: {installationIdsToString(installationIds)}");
+               
+                var lastMeasurements = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
 
-                var measurements = _measurementGenerationService.GenerateMeasurements(installationIds, now);
+                var filteredInstallationIds = _measurementGenerationService.GetInstallationIdsToAddMeasurementTo(lastMeasurements, now);
+                _logger.LogInformation($"Generating measurements for installations: {installationIdsToString(filteredInstallationIds)}");
+
+                var measurements = _measurementGenerationService.GenerateMeasurements(filteredInstallationIds, lastMeasurements, now);
                 _logger.LogInformation($"Generated measurements: {JsonConvert.SerializeObject(measurements)}");
 
                 await _measurementRepository.AddMeasurementsAsync(measurements);
