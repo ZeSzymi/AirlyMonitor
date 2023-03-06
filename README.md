@@ -8,7 +8,7 @@ An engineering project for thesis.
 
 **Database** - Solution requires SQL Server database installed to work
 
-**RabbitMQ** - Solution requires RabbitMq server to work. Ideally docker image of MassTransit RabbitMQ from https://hub.docker.com/r/masstransit/rabbitmq. You can start docker image with command
+**RabbitMQ** - Solution requires RabbitMq server to work. Ideally docker image of MassTransit **RabbitMQ** from https://hub.docker.com/r/masstransit/rabbitmq. You can start docker image with command
 ```
 docker run -p 15672:15672 -p 5672:5672 masstransit/rabbitmq
 ```
@@ -78,7 +78,7 @@ docker run -p 15672:15672 -p 5672:5672 masstransit/rabbitmq
   },
 ```
 
-**AlertsMonitor**
+**MeasurementsSimulator**
 ```
  "Logging": {
     "LogLevel": {
@@ -124,7 +124,7 @@ And then apply script located in /Database-scripts **SQLQuery_1**
 
 ## IdentityUI
 
-Build frontend app into wwwroot folder
+Build frontend app into **wwwroot** folder
 ```
 ng build --configuration=local
 ```
