@@ -28,7 +28,7 @@ namespace AirlyMonitor.Services
                 Headers =
                 {
                     { "apikey", _options.ApiKey },
-                    { "Authorization", token }
+                    { "Authorization", token ?? "token"}
                 }
             };
 
@@ -62,7 +62,7 @@ namespace AirlyMonitor.Services
                 Headers =
                 {
                     { "apikey", _options.ApiKey },
-                    { "Authorization", token }
+                    { "Authorization", token ?? "token" }
                 },
                 Content = content
             };

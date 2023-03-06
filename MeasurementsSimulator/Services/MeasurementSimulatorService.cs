@@ -13,7 +13,6 @@ namespace MeasurementsSimulator.Services
 
         public MeasurementSimulatorService(
             IMeasurementGenerationService measurementGenerationService, 
-            IAlertDefinitionsRepository alertDefinitionsRepository, 
             IMeasurementRepository measurementRepository,
             IInstallationsRepository installationRepository,
             ILogger<MeasurementSimulatorService> logger)
