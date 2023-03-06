@@ -33,7 +33,7 @@ namespace AirlyInfrastructure.Database
             set => Values = JsonConvert.SerializeObject(value);
         }
 
-        private double GetAqiPM25(double pm25)
+        public double GetAqiPM25(double pm25)
         {
             var breakpoints = new[] { 12.0, 35.4, 55.4, 150.4, 250.4, 350.4, 500.4 };
             var aqiValues = new double[] { 0, 50, 100, 150, 200, 300, 500 };
@@ -41,7 +41,7 @@ namespace AirlyInfrastructure.Database
             return CalculateAqi(pm25, breakpoints, aqiValues);
         }
 
-        private double GetAqiPM10(double pm10)
+        public double GetAqiPM10(double pm10)
         {
             var breakpoints = new[] { 54.0, 154.0, 254.0, 354.0, 424.0, 504.0, 604.0 };
             var aqiValues = new double[] { 0, 50, 100, 150, 200, 300, 500 };
@@ -49,7 +49,7 @@ namespace AirlyInfrastructure.Database
             return CalculateAqi(pm10, breakpoints, aqiValues);
         }
 
-        private double GetAqiPM1(double pm1)
+        public double GetAqiPM1(double pm1)
         {
             var breakpoints = new[] { 0.0, 12.0, 35.4, 55.4, 150.4, 250.4, 500.4 };
             var aqiValues = new double[] { 0, 50, 100, 150, 200, 300, 500 };
@@ -57,7 +57,7 @@ namespace AirlyInfrastructure.Database
             return CalculateAqi(pm1, breakpoints, aqiValues);
         }
 
-        private double CalculateAqi(double measurement, double[] breakpoints, double[] aqiValues)
+        public double CalculateAqi(double measurement, double[] breakpoints, double[] aqiValues)
         {
             var iHigh = breakpoints.Length - 1;
 
