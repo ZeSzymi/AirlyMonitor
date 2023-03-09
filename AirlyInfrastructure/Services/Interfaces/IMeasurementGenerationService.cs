@@ -6,6 +6,6 @@ namespace AirlyInfrastructure.Services.Interfaces
     {
         List<Measurement> GenerateMeasurementsForInstrumentsInArea(List<int> installationIds);
         List<Measurement> GenerateMeasurements(List<int> installationIds, List<Measurement> measurements, DateTime utcNow);
-        List<int> GetInstallationIdsToAddMeasurementTo(List<Measurement> measurements, DateTime utcNow);
+        List<int> GetInstallationIdsToAddMeasurementTo(List<int> installationIds, List<Measurement> measurements, DateTime utcNow);
     }
 }

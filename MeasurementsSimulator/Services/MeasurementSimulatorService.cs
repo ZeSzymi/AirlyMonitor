@@ -1,4 +1,5 @@
 ﻿using AirlyInfrastructure.Repositories.Interfaces;
+using AirlyInfrastructure.Services.Interfaces;
 using MeasurementsSimulator.Services.Interfaces;
 using Newtonsoft.Json;
 
@@ -31,7 +32,7 @@ namespace MeasurementsSimulator.Services
                
                 var lastMeasurements = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
 
-                var filteredInstallationIds = _measurementGenerationService.GetInstallationIdsToAddMeasurementTo(lastMeasurements, now);
+                var filteredInstallationIds = _measurementGenerationService.GetInstallationIdsToAddMeasurementTo(installationIds, lastMeasurements, now);
                 _logger.LogInformation($"Generating measurements for installations: {installationIdsToString(filteredInstallationIds)}");
 
                 var measurements = _measurementGenerationService.GenerateMeasurements(filteredInstallationIds, lastMeasurements, now);
@@ -47,6 +48,6 @@ namespace MeasurementsSimulator.Services
         }
 
         private string installationIdsToString(List<int> installationIds)
-            => installationIds.Select(installationId => installationId.ToString()).Aggregate((a, b) => $"{a} | {b} |");
+            => installationIds.Select(installationId => installationId.ToString()).Aggregate(string.Empty, (a, b) => $"{a} | {b} |");
     }
 }

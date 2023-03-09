@@ -40,6 +40,7 @@ builder.Services.AddScoped<IAlertDefinitionsService, AirlyMonitor.Services.Alert
 builder.Services.AddScoped<IInstallationsService, InstallationsService>();
 builder.Services.AddScoped<IAirlyApiService, AirlyApiService>();
 builder.Services.AddScoped<IPushNotificationsHttpService, PushNotificationsHttpService>();
+builder.Services.AddScoped<IMeasurementGenerationService, MeasurementGenerationService>();
 builder.Services.AddScoped<IHttpService, HttpService>();
 builder.Services.AddHttpContextAccessor();
 

@@ -6,10 +6,11 @@ namespace AirlyInfrastructure.Services
 {
     public class MeasurementGenerationService : IMeasurementGenerationService
     {
-        public List<int> GetInstallationIdsToAddMeasurementTo(List<Measurement> measurements, DateTime utcNow)
+        public List<int> GetInstallationIdsToAddMeasurementTo(List<int> installationIds, List<Measurement> measurements, DateTime utcNow)
         {
             var now = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, 0, 0);
-            return measurements.Where(m => m.TillDateTime.AddHours(1) <= now).Select(m => m.InstallationId).ToList();
+            var installationdsWithoutMeasurements = installationIds.Where(id => !measurements.Select(m => m.InstallationId).Contains(id)).ToList();
+            return measurements.Where(m => m.TillDateTime.AddHours(1) <= now).Select(m => m.InstallationId).Concat(installationdsWithoutMeasurements).ToList();
         }
 
         public List<Measurement> GenerateMeasurementsForInstrumentsInArea(List<int> installationIds)
