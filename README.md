@@ -1,6 +1,12 @@
 # AirlyMonitor 
 
-An engineering project for thesis.
+An engineering project for thesis. App is responsible for monitoring and alerting about the air quality based on Airly installations. For demonstration purpouses measurement simulator is simulating data for selected instruments. In real life application we would use real airly data or any other installation that would generate data. 
+
+**App** can:
+- Return current and previous measurements for installaion assinged previously by user.
+- Add alert definitions with rules for raising alerts
+- Alert users (emails, firebase messages) based on alert definitions set by them previously
+- Simulate generating measurements for selected installations.
 
 ## Setup
 
