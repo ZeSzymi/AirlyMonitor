@@ -1,4 +1,6 @@
-﻿using AirlyInfrastructure.Models.Database;
+﻿using AirlyInfrastructure.Database;
+using AirlyInfrastructure.Models.Database;
+using AirlyInfrastructure.Repositories;
 using AirlyInfrastructure.Repositories.Interfaces;
 using AirlyInfrastructure.Services.Interfaces;
 using AirlyMonitor.Models.Database;
@@ -6,6 +8,7 @@ using AirlyMonitor.Models.Dtos;
 using AirlyMonitor.Models.QueryParams;
 using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
+using Serilog;
 
 namespace AirlyMonitor.Services
 {
@@ -39,6 +42,30 @@ namespace AirlyMonitor.Services
             }
 
             return new InstallationDto(installation);
+        }
+
+        public async Task<InstallationDto> AddInstallationIfDoesNotExistAsync(string userId, int installationId)
+        {
+            var installation = await _installationsRepository.GetInstallationAsync(installationId);
+
+            if (installation == null)
+            {
+                installation = await _airlyApiService.GetInstallationByIdAsync(installationId);
+                await _installationsRepository.AddInstallationAsync(installation);
+            }
+
+            var latestMeasurement = await _measurementRepository.GetLatestMeasurementAsync(installationId);
+
+            return new InstallationDto(installation, new List<Measurement> { latestMeasurement })
+            {
+                Marked = await _installationsRepository.IsMarked(userId, installationId),
+                HasAlert = await _installationsRepository.HasAlert(userId, installationId),
+                Location = new Location
+                {
+                    Latitude = installation.Latitude,
+                    Longitude = installation.Longitude
+                }
+            };
         }
 
         public async Task<InstallationDto> MarkInstallationAsync(string userId, int installationId)

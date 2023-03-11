@@ -20,7 +20,7 @@ namespace AirlyMonitor.Controllers
         [HttpPost("{installationId}")]
         public async Task<ActionResult<InstallationDto>> AddInstallationAsync(int installationId)
         {
-            var installation = await _installationsService.AddInstallationIfDoesNotExistAsync(installationId);
+            var installation = await _installationsService.AddInstallationIfDoesNotExistAsync(User.Identity.Name, installationId);
             return Ok(installation);
         }
 

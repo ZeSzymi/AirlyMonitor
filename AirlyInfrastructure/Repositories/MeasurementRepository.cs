@@ -33,6 +33,12 @@ namespace AirlyInfrastructure.Repositories
             .Select(ms => ms.OrderByDescending(m => m.FromDateTime).First())
             .ToListAsync();
 
+        public Task<Measurement?> GetLatestMeasurementAsync(int installationId)
+            => _context.Measurements
+            .Where(m => m.InstallationId == installationId)
+            .OrderByDescending(m => m.FromDateTime)
+            .FirstOrDefaultAsync();
+
         public Task<List<Measurement>> GetMeasurementsAsync(int installationId, DateTime from, DateTime to) =>
             _context.Measurements
                 .Where(m => m.InstallationId == installationId && m.FromDateTime >= from && m.TillDateTime <= to)

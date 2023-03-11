@@ -8,5 +8,6 @@ namespace AirlyInfrastructure.Repositories.Interfaces
         Task<List<Measurement>> GetMeasurementsAsync(List<int> installationsIds);
         Task<List<Measurement>> GetMeasurementsAsync(int installationId, DateTime from, DateTime to);
         Task<List<Measurement?>> GetLatestMeasurementsAsync(List<int> installationIds);
+        Task<Measurement?> GetLatestMeasurementAsync(int installationId);
     }
 }

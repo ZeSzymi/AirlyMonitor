@@ -16,5 +16,7 @@ namespace AirlyInfrastructure.Repositories.Interfaces
         Task<List<Installation>> GetInstallationsAsync(List<int> installationIds);
         Task<List<int>> GetUserInstallationIds(string userId, List<int> installationIds);
         Task<List<int>> GetInstallationsIdsForUserAlertDefinitions(string userId, List<int> installationIds);
+        Task<bool> IsMarked(string userId, int installationId);
+        Task<bool> HasAlert(string userId, int installationId);
     }
 }

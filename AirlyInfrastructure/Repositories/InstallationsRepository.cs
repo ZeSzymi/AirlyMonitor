@@ -106,6 +106,8 @@ namespace AirlyInfrastructure.Repositories
 
         public Task<Installation?> GetInstallationAsync(int installationId) => _context
             .Installations
+            .Include(i => i.Sponsor)
+            .Include(i => i.Address)
             .AsNoTracking()
             .Where(i => i.Id == installationId)
             .FirstOrDefaultAsync();
@@ -115,5 +117,11 @@ namespace AirlyInfrastructure.Repositories
             .Where(a => a.UserId == userId && installationIds.Contains(a.InstallationId))
             .Select(i => i.InstallationId)
             .ToListAsync();
+
+        public Task<bool> IsMarked(string userId, int installationId)
+            => _context.UserInstallations.AnyAsync(ui => ui.InstallationId == installationId && ui.UserId == userId);
+
+        public Task<bool> HasAlert(string userId, int installationId)
+           => _context.AlertDefinitions.AnyAsync(a => a.InstallationId == installationId && a.UserId == userId);
     }
 }
