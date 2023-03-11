@@ -80,7 +80,7 @@ ALTER TABLE AlertDefinitions ADD CONSTRAINT FK_AlertDefinitions_Installations FO
 ALTER TABLE AlertDefinitions ADD CONSTRAINT FK_AlertDefinitions_AspNetUsers FOREIGN KEY (UserId) REFERENCES [AspNetUsers](Id);
 
 ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_Installations FOREIGN KEY (InstallationId) REFERENCES [Installations](Id);
-ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_AlertDefinitions FOREIGN KEY (AlertDefinitionId) REFERENCES [AlertDefinitions](Id);
+ALTER TABLE Alerts ADD CONSTRAINT FK_Alerts_AlertDefinitions FOREIGN KEY (AlertDefinitionId) REFERENCES [AlertDefinitions](Id) on delete cascade;;
 
 ALTER TABLE Measurements ADD CONSTRAINT FK_Measurements_Installations FOREIGN KEY (InstallationId) REFERENCES Installations(Id);
 

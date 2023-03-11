@@ -16,6 +16,11 @@ namespace AirlyInfrastructure.Repositories
 
         public async Task<List<Measurement>> AddMeasurementsAsync(List<Measurement> measurements)
         {
+            if (!measurements.Any())
+            {
+                return measurements;
+            }
+
             _context.Measurements.AddRange(measurements);
             await _context.SaveChangesAsync();
             return measurements;

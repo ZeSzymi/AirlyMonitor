@@ -23,6 +23,12 @@ namespace AirlyMonitor.Services
             return await _alertDefinitionsRepository.AddAlertDefinitionAsync(alertDefinition);
         }
 
+        public async Task RemoveAlertDefinitionAsync(int installationId)
+        {
+            var alertDefinitions = await _alertDefinitionsRepository.GetAlertDefinitionsAsync(installationId);
+            await _alertDefinitionsRepository.RemoveAlertDefinitions(alertDefinitions);
+        }
+
         public Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId)
             => _alertDefinitionsRepository.GetAlertDefinitionsAsync(installationId);
 

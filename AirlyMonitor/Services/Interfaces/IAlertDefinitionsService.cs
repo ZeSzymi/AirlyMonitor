@@ -8,5 +8,6 @@ namespace AirlyMonitor.Services.Interfaces
         Task<List<AlertDefinition>> GetAlertDefinitionsAsync(int installationId);
         Task<List<AlertDefinition>> GetAlertDefinitionsForUserAsync(string userId);
         Task<List<AlertDefinition>> GetAlertDefinitionsAsync();
+        Task RemoveAlertDefinitionAsync(int installationId);
     }
 }

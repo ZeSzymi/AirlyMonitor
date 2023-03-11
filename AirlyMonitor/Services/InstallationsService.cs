@@ -49,6 +49,9 @@ namespace AirlyMonitor.Services
             return installation;
         }
 
+        public Task UnMarkInstallationAsync(string userId, int installationId)
+            => _installationsRepository.RemoveUserInstallation(userId, installationId);
+
         public async Task<UserInstallation> AddUserInstallationIfDoesNotExistAsync(string userId, int installationId)
         {
             var userInstallation = await _installationsRepository.GetUserInstallationAsync(userId, installationId);
@@ -62,31 +65,42 @@ namespace AirlyMonitor.Services
             return userInstallation;
         }
 
-        public async Task<List<InstallationDto>> GetNearestInstallationsAsync(GetInstallationsQueryParams queryParams)
+        public async Task<List<InstallationDto>> GetNearestInstallationsAsync(string userId, GetInstallationsQueryParams queryParams)
         {
             var installations = await _airlyApiService.GetNearestInstallationsAsync(queryParams);
-            return await GetInstallationsAsync(installations, queryParams.Lat, queryParams.Lng);
+            return await GetInstallationsAsync(userId, installations, queryParams.Lat, queryParams.Lng);
         }
 
         public async Task<List<InstallationDto>> GetUserInstallations(string userId)
         {
             var installations = await _installationsRepository.GetInstallationsForUserAsync(userId);
-            return await GetInstallationsAsync(installations);
+            return await GetInstallationsAsync(userId, installations);
         }
 
-        private async Task<List<InstallationDto>> GetInstallationsAsync(List<Installation> installations, double lat = 0.0, double lng = 0.0)
+        private async Task<List<InstallationDto>> GetInstallationsAsync(string userId, List<Installation> installations, double lat = 0.0, double lng = 0.0)
         {
             var installationIds = installations.Select(i => i.Id).ToList();
             var latestMeasurements = await _measurementRepository.GetLatestMeasurementsAsync(installationIds);
-            var filteredInstallationIds = installationIds.Where(id => !latestMeasurements.Select(m => m.InstallationId).Contains(id)).ToList();
+            var filteredInstallations = installations.Where(installation => !latestMeasurements.Select(m => m.InstallationId).Contains(installation.Id)).ToList();
+            var filteredInstallationIds = filteredInstallations.Select(i => i.Id).ToList();
             var generatedMeasurements = _measurementGenerationService.GenerateMeasurementsForInstrumentsInArea(filteredInstallationIds);
+            await _installationsRepository.AddInstallationsAsync(filteredInstallations);
+            await _measurementRepository.AddMeasurementsAsync(generatedMeasurements);
+            var userAlertDefinitionInstallationIds = await _installationsRepository.GetInstallationsIdsForUserAlertDefinitions(userId, installationIds);
+            var userInstallationIds = await _installationsRepository.GetUserInstallationIds(userId, installationIds);
             return installations.Select(installation => new InstallationDto(installation, latestMeasurements.Concat(generatedMeasurements).ToList())
             {
-                DistanceToInstallationMeters = CalculateDistance(installation.Location, new Location
+                DistanceToInstallationMeters = CalculateDistance(new Location 
+                { 
+                    Latitude = installation.Latitude, 
+                    Longitude = installation.Longitude 
+                }, new Location
                 {
                     Latitude = lat,
                     Longitude = lng
-                })
+                }),
+                Marked = userInstallationIds.Any(i => i.Equals(installation.Id)),
+                HasAlert = userAlertDefinitionInstallationIds.Any(i => i.Equals(installation.Id))
             }).ToList();
         }
 

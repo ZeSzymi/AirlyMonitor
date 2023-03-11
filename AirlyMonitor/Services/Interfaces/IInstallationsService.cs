@@ -9,7 +9,8 @@ namespace AirlyMonitor.Services.Interfaces
         Task<InstallationDto> AddInstallationIfDoesNotExistAsync(int installationId);
         Task<UserInstallation> AddUserInstallationIfDoesNotExistAsync(string userId, int installationId);
         Task<InstallationDto> MarkInstallationAsync(string userId, int installationId);
-        Task<List<InstallationDto>> GetNearestInstallationsAsync(GetInstallationsQueryParams queryParams);
+        Task UnMarkInstallationAsync(string userId, int installationId);
+        Task<List<InstallationDto>> GetNearestInstallationsAsync(string userId, GetInstallationsQueryParams queryParams);
         Task<List<InstallationDto>> GetUserInstallations(string userId);
     }
 }

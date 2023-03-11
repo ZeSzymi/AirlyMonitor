@@ -23,6 +23,13 @@ namespace AirlyMonitor.Controllers
             return Ok(addedAlertDefinition);
         }
 
+        [HttpDelete("{installationId}")]
+        public async Task<ActionResult<AlertDefinitionDto>> RemoveAlertDefinition(int installationId)
+        {
+            await _alertDefinitionsService.RemoveAlertDefinitionAsync(installationId);
+            return Ok();
+        }
+
         [HttpGet("{installationId}")]
         public async Task<ActionResult<List<AlertDefinitionDto>>> GetAlertDefinitions(int installationId)
         {

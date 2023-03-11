@@ -36,11 +36,47 @@ namespace AirlyInfrastructure.Repositories
             return installation;
         }
 
+        public async Task<List<Installation>> AddInstallationsAsync(List<Installation> installations)
+        {
+
+            var addresses = installations.Select(i => i.Address);
+            var sponsors = installations.Select(i => i.Sponsor);
+            var locations = installations.Select(i => i.Location);
+            var installationIds = installations.Select(i => i.Id);
+            var existingInstallations = await _context.Installations.Select(i => i.Id).Where(id => installationIds.Contains(id)).ToListAsync();
+            var installationsToAdd = installations.Where(installation => !existingInstallations.Contains(installation.Id)).ToList();
+
+            installationsToAdd.ForEach(installation =>
+            {
+                installation.Latitude = installation.Location.Latitude;
+                installation.Longitude = installation.Location.Longitude;
+            });
+
+            await _context.Addresses.AddRangeAsync(addresses);
+            await _context.Sponsors.AddRangeAsync(sponsors);
+            await _context.Installations.AddRangeAsync(installationsToAdd);
+            await _context.SaveChangesAsync();
+            return installations;
+        }
+
         public async Task<UserInstallation> AddUserInstallationAsync(UserInstallation userInstallation)
         {
             await _context.UserInstallations.AddAsync(userInstallation);
             await _context.SaveChangesAsync();
             return userInstallation;
+        }
+
+        public async Task RemoveUserInstallation(string userId, int installationId)
+        {
+            var userInstallation = _context.UserInstallations.Where(i => i.InstallationId == installationId && i.UserId == userId).FirstOrDefault();
+
+            if (userInstallation == null)
+            {
+                return;
+            }
+
+            _context.UserInstallations.Remove(userInstallation);
+            await _context.SaveChangesAsync();
         }
 
         public Task<UserInstallation?> GetUserInstallationAsync(string userId, int installationId)
@@ -56,6 +92,12 @@ namespace AirlyInfrastructure.Repositories
             .Select(u => u.Installation)
             .ToListAsync();
 
+        public Task<List<int>> GetUserInstallationIds(string userId, List<int> installationIds)
+            => _context.UserInstallations
+                .Where(ui => installationIds.Contains(ui.InstallationId) && ui.UserId == userId)
+                .Select(ui => ui.InstallationId)
+                .ToListAsync();
+
         public Task<List<Installation>> GetInstallationsAsync(List<int> installationIds)
            => _context.Installations
             .Include(installation => installation.Address)
@@ -67,5 +109,11 @@ namespace AirlyInfrastructure.Repositories
             .AsNoTracking()
             .Where(i => i.Id == installationId)
             .FirstOrDefaultAsync();
+
+        public Task<List<int>> GetInstallationsIdsForUserAlertDefinitions(string userId, List<int> installationIds)
+            => _context.AlertDefinitions
+            .Where(a => a.UserId == userId && installationIds.Contains(a.InstallationId))
+            .Select(i => i.InstallationId)
+            .ToListAsync();
     }
 }

@@ -1,9 +1,6 @@
-﻿using AirlyInfrastructure.Models.Messages;
-using AirlyMonitor.Models.Dtos;
+﻿using AirlyMonitor.Models.Dtos;
 using AirlyMonitor.Models.QueryParams;
-using AirlyMonitor.Services.Interface;
 using AirlyMonitor.Services.Interfaces;
-using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,10 +31,17 @@ namespace AirlyMonitor.Controllers
             return Ok(installations);
         }
 
+        [HttpDelete("unmark/{installationId}")]
+        public async Task<ActionResult<InstallationDto>> UnMarkInstallationIdAsync(int installationId)
+        {
+            await _installationsService.UnMarkInstallationAsync(User.Identity.Name, installationId);
+            return Ok();
+        }
+
         [HttpGet()]
         public async Task<ActionResult<List<InstallationDto>>> GetInstallationsAsync([FromQuery] GetInstallationsQueryParams queryParams)
         {
-            var installations = await _installationsService.GetNearestInstallationsAsync(queryParams);
+            var installations = await _installationsService.GetNearestInstallationsAsync(User.Identity.Name, queryParams);
             return Ok(installations);
         }
 

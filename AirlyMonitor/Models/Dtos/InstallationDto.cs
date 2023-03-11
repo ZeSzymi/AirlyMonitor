@@ -28,7 +28,9 @@ namespace AirlyMonitor.Models.Dtos
         public double Elevation { get; set; }
         public Sponsor Sponsor { get; set; }
         public Location Location { get; set; }
-        public double DistanceToInstallationMeters { get; set; }
+        public double? DistanceToInstallationMeters { get; set; }
+        public bool Marked { get; set; }
+        public bool HasAlert { get; set; }
         public MeasurementDto? Measurement { get; set; }
     }
 }

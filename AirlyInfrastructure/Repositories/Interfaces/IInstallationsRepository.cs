@@ -7,10 +7,14 @@ namespace AirlyInfrastructure.Repositories.Interfaces
     {
         Task<List<int>> GetInstallationIdsAsync();
         Task<Installation> AddInstallationAsync(Installation installation);
+        Task<List<Installation>> AddInstallationsAsync(List<Installation> installation);
         Task<Installation?> GetInstallationAsync(int installationId);
         Task<UserInstallation> AddUserInstallationAsync(UserInstallation userInstallation);
         Task<UserInstallation?> GetUserInstallationAsync(string userId, int installationId);
+        Task RemoveUserInstallation(string userId, int installationId);
         Task<List<Installation>> GetInstallationsForUserAsync(string userId);
         Task<List<Installation>> GetInstallationsAsync(List<int> installationIds);
+        Task<List<int>> GetUserInstallationIds(string userId, List<int> installationIds);
+        Task<List<int>> GetInstallationsIdsForUserAlertDefinitions(string userId, List<int> installationIds);
     }
 }

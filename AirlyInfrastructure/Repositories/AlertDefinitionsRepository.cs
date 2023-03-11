@@ -21,6 +21,12 @@ namespace AirlyInfrastructure.Repositories
             return alertDefinition;
         }
 
+        public async Task RemoveAlertDefinitions(List<AlertDefinition> alertDefinitions)
+        {
+            _context.AlertDefinitions.RemoveRange(alertDefinitions);
+            await _context.SaveChangesAsync();
+        }
+
         public Task<List<AlertDefinition>> GetAlertDefinitionsAsync()
             => _context.AlertDefinitions.ToListAsync();
 
